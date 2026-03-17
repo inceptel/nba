@@ -65,6 +65,7 @@
   .leaders { display: flex; gap: 8px; flex-wrap: wrap; }
   .leader { background: var(--surface2); border-radius: 4px; padding: 4px 7px; font-size: 10px; color: var(--muted); white-space: nowrap; }
   .leader span { color: var(--text); font-weight: 600; }
+  .venue { font-size: 10px; color: var(--muted); margin-top: 5px; }
 
   .line-scores { display: flex; gap: 2px; margin-bottom: 6px; overflow-x: auto; }
   .qtr { text-align: center; min-width: 28px; }
@@ -330,6 +331,8 @@ function renderGame(event) {
 
   const broadcast = comp.broadcasts?.[0]?.names?.[0] || '';
   const startTime = isScheduled ? formatTime(comp.date || event.date) : '';
+  const venue = comp.venue?.fullName || '';
+  const venueCity = comp.venue?.address?.city || '';
 
   const scoreOrTime = (team, isWinner, isLoser) => {
     if (isScheduled) return `<div class="no-score">${startTime}</div>`;
@@ -392,7 +395,7 @@ function renderGame(event) {
     </div>
   </div>
   ${linescoresHtml}
-  ${leadersHtml ? `<div class="game-footer">${leadersHtml}</div>` : ''}
+  ${leadersHtml || (isScheduled && venue) ? `<div class="game-footer">${leadersHtml}${isScheduled && venue ? `<div class="venue">&#x1F3DF; ${venue}${venueCity ? ` · ${venueCity}` : ''}</div>` : ''}</div>` : ''}
 </a>`;
 }
 
