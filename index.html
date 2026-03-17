@@ -100,6 +100,7 @@
   .standings-team-logo { width: 18px; height: 18px; object-fit: contain; vertical-align: middle; margin-right: 5px; }
   .standings-team-name { vertical-align: middle; }
   .standings-gb { color: var(--muted); }
+  .standings-l10 { color: var(--muted); }
   .standings-pct { color: var(--text); font-weight: 600; }
   .playoffs-line td { border-top: 2px solid var(--accent) !important; }
 
@@ -449,7 +450,7 @@ async function loadStandings() {
         <div class="standings-conf-header">${confName}</div>
         <table class="standings-table">
           <thead><tr>
-            <th>Team</th><th>W</th><th>L</th><th>PCT</th><th>GB</th><th>STRK</th>
+            <th>Team</th><th>W</th><th>L</th><th>PCT</th><th>GB</th><th>L10</th><th>STRK</th>
           </tr></thead>
           <tbody>`;
       standings.forEach((entry, idx) => {
@@ -457,8 +458,11 @@ async function loadStandings() {
         const abbr = team?.abbreviation || '';
         const logoUrl = team?.logos?.[0]?.href || `https://a.espncdn.com/i/teamlogos/nba/500/${abbr.toLowerCase()}.png`;
         const displayName = team?.shortDisplayName || team?.displayName || abbr;
-        const stats = {};
-        for (const s of (entry.stats || [])) { stats[s.name] = s.value ?? s.displayValue; }
+        const stats = {}, statsDisplay = {};
+        for (const s of (entry.stats || [])) {
+          stats[s.name] = s.value ?? s.displayValue;
+          statsDisplay[s.name] = s.displayValue ?? s.value;
+        }
         const wins = stats['wins'] ?? stats['overall.wins'] ?? '-';
         const losses = stats['losses'] ?? stats['overall.losses'] ?? '-';
         const pct = stats['winPercent'] ?? stats['winpercent'] ?? '';
@@ -467,6 +471,7 @@ async function loadStandings() {
         const gbDisplay = gb === 0 || gb === '0' ? '-' : gb;
         const streakRaw = stats['streak'];
         const streakDisplay = streakRaw !== undefined && streakRaw !== '' ? (streakRaw > 0 ? `W${Math.abs(streakRaw)}` : `L${Math.abs(streakRaw)}`) : '-';
+        const l10 = statsDisplay['Last Ten Games'] ?? statsDisplay['lastTenGames'] ?? statsDisplay['l10'] ?? '-';
         const playoffLine = idx === 6 ? ' class="playoffs-line"' : '';
         html += `<tr${playoffLine}>
           <td><span class="standings-rank">${idx+1}</span> <img class="standings-team-logo" src="${logoUrl}" alt="${abbr}" onerror="this.style.display='none'"><span class="standings-team-name">${displayName}</span></td>
@@ -474,6 +479,7 @@ async function loadStandings() {
           <td>${losses}</td>
           <td class="standings-pct">${pctDisplay}</td>
           <td class="standings-gb">${gbDisplay}</td>
+          <td class="standings-l10">${l10}</td>
           <td>${streakDisplay}</td>
         </tr>`;
       });
