@@ -589,7 +589,7 @@ async function loadStandings() {
         <div class="standings-conf-header">${confName}</div>
         <table class="standings-table">
           <thead><tr>
-            <th>Team</th><th>W</th><th>L</th><th>PCT</th><th>GB</th><th>HOME</th><th>ROAD</th><th>L10</th><th>STRK</th>
+            <th>Team</th><th>W</th><th>L</th><th>PCT</th><th>GB</th><th>CONF</th><th>HOME</th><th>ROAD</th><th>L10</th><th>STRK</th>
           </tr></thead>
           <tbody>`;
       standings.forEach((entry, idx) => {
@@ -615,6 +615,7 @@ async function loadStandings() {
         const l10 = statsDisplay['Last Ten Games'] ?? statsDisplay['lastTenGames'] ?? statsDisplay['l10'] ?? '-';
         const homeRecord = statsDisplay['Home'] ?? statsDisplay['homeRecord'] ?? statsDisplay['home'] ?? '-';
         const roadRecord = statsDisplay['Road'] ?? statsDisplay['roadRecord'] ?? statsDisplay['road'] ?? '-';
+        const confRecord = statsDisplay['vsConference'] ?? statsDisplay['Conference'] ?? statsDisplay['conference'] ?? '-';
         const teamColor = TEAM_COLORS[abbr]?.[0] || '#555';
         const playoffLine = idx === 6 ? ' class="playoffs-line"' : idx === 10 ? ' class="playin-line"' : '';
         html += `<tr${playoffLine}>
@@ -623,6 +624,7 @@ async function loadStandings() {
           <td>${losses}</td>
           <td class="standings-pct">${pctDisplay}</td>
           <td class="standings-gb">${gbDisplay}</td>
+          <td class="standings-l10">${confRecord}</td>
           <td class="standings-l10">${homeRecord}</td>
           <td class="standings-l10">${roadRecord}</td>
           <td class="standings-l10">${l10}</td>
