@@ -42,7 +42,7 @@
 
   .game-header { padding: 8px 12px; background: var(--surface2); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
   .game-status { font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; }
-  .broadcast { font-size: 10px; color: var(--muted); }
+  .broadcast { font-size: 9px; font-weight: 700; letter-spacing: 0.04em; padding: 2px 5px; border-radius: 3px; color: #fff; }
 
   .teams { padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; }
   .team-row { display: flex; align-items: center; gap: 8px; padding: 4px 0; }
@@ -183,6 +183,18 @@
 </div>
 
 <script>
+const NETWORK_COLORS = {
+  'ESPN': '#d00',
+  'ESPN2': '#d00',
+  'ESPNU': '#d00',
+  'ABC': '#0075c2',
+  'TNT': '#004bce',
+  'NBA TV': '#552583',
+  'MAX': '#002be0',
+  'CBS': '#0032a0',
+  'NBC': '#e5a020',
+};
+
 const TEAM_COLORS = {
   'ATL':['#C1062A','#FDB927'],'BOS':['#007A33','#BA9653'],'BKN':['#000000','#FFFFFF'],
   'CHA':['#1D1160','#00788C'],'CHI':['#CE1141','#000000'],'CLE':['#860038','#FDBB30'],
@@ -373,7 +385,7 @@ function renderGame(event) {
 <a class="game ${isLive ? 'live' : isFinal ? 'final' : 'scheduled'}" style="border-left: 3px solid ${accentColor}99" href="${gameUrl}" target="_blank" rel="noopener">
   <div class="game-header">
     <span class="game-status">${statusText}</span>
-    ${broadcast ? `<span class="broadcast">${broadcast}</span>` : ''}
+    ${broadcast ? (() => { const c = NETWORK_COLORS[broadcast] || '#555'; return `<span class="broadcast" style="background:${c}">${broadcast}</span>`; })() : ''}
   </div>
   <div class="teams">
     <div class="team-row ${awayWin || awayLeading ? 'winner' : (isFinal || homeLeading) ? 'loser' : ''}">
