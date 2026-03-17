@@ -33,8 +33,8 @@
 
   .games { padding: 12px; display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 10px; }
 
-  .game { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; transition: border-color 0.2s; }
-  .game:hover { border-color: #333348; }
+  .game { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; transition: border-color 0.2s, box-shadow 0.2s; cursor: pointer; text-decoration: none; display: block; color: inherit; }
+  .game:hover { border-color: #333348; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
   .game.live { border-color: #2a4a2a; }
   .game.live .game-status { color: var(--green); }
   .game.final .game-status { color: var(--muted); }
@@ -335,8 +335,9 @@ function renderGame(event) {
 
   const accentColor = isFinal ? (homeWin ? homeColor : awayColor) : homeColor;
 
+  const gameUrl = `https://www.espn.com/nba/game/_/gameId/${event.id}`;
   return `
-<div class="game ${isLive ? 'live' : isFinal ? 'final' : 'scheduled'}" style="border-left: 3px solid ${accentColor}99">
+<a class="game ${isLive ? 'live' : isFinal ? 'final' : 'scheduled'}" style="border-left: 3px solid ${accentColor}99" href="${gameUrl}" target="_blank" rel="noopener">
   <div class="game-header">
     <span class="game-status">${statusText}</span>
     ${broadcast ? `<span class="broadcast">${broadcast}</span>` : ''}
@@ -362,7 +363,7 @@ function renderGame(event) {
   </div>
   ${linescoresHtml}
   ${leadersHtml ? `<div class="game-footer">${leadersHtml}</div>` : ''}
-</div>`;
+</a>`;
 }
 
 function updatePageTitle(events) {
