@@ -218,12 +218,14 @@ function renderLeaders(competitors) {
   return leaders.length ? `<div class="leaders">${leaders.join('')}</div>` : '';
 }
 
-function renderLineScores(competitor) {
+function renderLineScores(competitor, isLive) {
   const linescores = competitor.linescores || [];
   if (!linescores.length) return '';
+  const lastIdx = linescores.length - 1;
   return linescores.map((ls, i) => {
     const label = i < 4 ? `Q${i+1}` : `OT${i-3}`;
-    return `<div class="qtr"><div class="qtr-label">${label}</div><div class="qtr-score">${ls.value ?? '-'}</div></div>`;
+    const isCurrent = isLive && i === lastIdx;
+    return `<div class="qtr"><div class="qtr-label">${label}</div><div class="qtr-score${isCurrent ? ' current' : ''}">${ls.value ?? '-'}</div></div>`;
   }).join('');
 }
 
@@ -280,8 +282,8 @@ function renderGame(event) {
   // Line scores for live/final
   let linescoresHtml = '';
   if ((isLive || isFinal) && (away.linescores?.length || home.linescores?.length)) {
-    const awayLines = renderLineScores(away);
-    const homeLines = renderLineScores(home);
+    const awayLines = renderLineScores(away, isLive);
+    const homeLines = renderLineScores(home, isLive);
     if (awayLines || homeLines) {
       linescoresHtml = `
         <div style="padding: 6px 12px; border-bottom: 1px solid var(--border); display:flex; flex-direction:column; gap:4px;">
