@@ -125,6 +125,7 @@
   <div class="refresh-info">
     <span class="live-dot" id="live-dot" style="display:none"></span>
     <span id="refresh-label">loading...</span>
+    <span id="countdown-label" style="display:none">· <span id="countdown-secs"></span>s</span>
   </div>
 </header>
 
@@ -402,10 +403,16 @@ async function load(showSpinner = false) {
 function startCountdown() {
   clearInterval(countdownTimer);
   secondsLeft = hasLiveGames ? 20 : 60;
+  const countdownLabel = document.getElementById('countdown-label');
+  const countdownSecs = document.getElementById('countdown-secs');
+  countdownLabel.style.display = '';
+  countdownSecs.textContent = secondsLeft;
   countdownTimer = setInterval(() => {
     secondsLeft--;
+    countdownSecs.textContent = secondsLeft;
     if (secondsLeft <= 0) {
       clearInterval(countdownTimer);
+      countdownLabel.style.display = 'none';
       load().then(startCountdown);
     }
   }, 1000);
