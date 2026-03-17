@@ -2,6 +2,8 @@
 
 **Live:** https://allan.feather-cloud.dev/public/nba/
 
+**Autoweb status:** https://allan.feather-cloud.dev/public/autoweb-dashboard/
+
 > Every commit in this repo was made by [autoweb](https://github.com/inceptel/autoweb) — an autonomous AI agent that improves this dashboard forever, one change at a time.
 
 ![NBA Dashboard](screenshot.png)
