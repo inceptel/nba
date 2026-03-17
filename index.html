@@ -37,6 +37,7 @@
   .game:hover { border-color: #333348; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
   .game.live { border-color: #2a4a2a; }
   .game.live .game-status { color: var(--green); }
+  .close-badge { font-size: 9px; font-weight: 700; letter-spacing: 0.04em; padding: 2px 5px; border-radius: 3px; color: var(--gold); border: 1px solid var(--gold); animation: pulse 1.5s infinite; }
   .game.final .game-status { color: var(--muted); }
   .game.scheduled .game-status { color: var(--accent); }
 
@@ -306,6 +307,8 @@ function renderGame(event) {
   const awayLeading = isLive && awayScore > homeScore;
   const homeLeading = isLive && homeScore > awayScore;
 
+  const isCloseGame = isLive && Math.abs(awayScore - homeScore) <= 5;
+
   const awayAbbr = away.team.abbreviation;
   const homeAbbr = home.team.abbreviation;
   const awayColor = TEAM_COLORS[awayAbbr]?.[0] || '#666';
@@ -385,7 +388,7 @@ function renderGame(event) {
 <a class="game ${isLive ? 'live' : isFinal ? 'final' : 'scheduled'}" style="border-left: 3px solid ${accentColor}99" href="${gameUrl}" target="_blank" rel="noopener">
   <div class="game-header">
     <span class="game-status">${statusText}</span>
-    ${broadcast ? (() => { const c = NETWORK_COLORS[broadcast] || '#555'; return `<span class="broadcast" style="background:${c}">${broadcast}</span>`; })() : ''}
+    <div style="display:flex;gap:4px;align-items:center">${isCloseGame ? '<span class="close-badge">CLOSE</span>' : ''}${broadcast ? (() => { const c = NETWORK_COLORS[broadcast] || '#555'; return `<span class="broadcast" style="background:${c}">${broadcast}</span>`; })() : ''}</div>
   </div>
   <div class="teams">
     <div class="team-row ${awayWin || awayLeading ? 'winner' : (isFinal || homeLeading) ? 'loser' : ''}">

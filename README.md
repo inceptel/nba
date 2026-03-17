@@ -10,11 +10,25 @@
 
 Real-time NBA scores powered by the ESPN API. Automatically refreshes every 20 seconds during live games, 60 seconds otherwise.
 
-- Today's games with live scores, quarter-by-quarter breakdown
-- Team records, game status (live clock, final, tip-off time)
-- Top performers (points, rebounds, assists leaders)
-- All 30 teams with team colors
-- Sorted: live → final → scheduled
+- Today's games with live scores, quarter-by-quarter line score breakdown
+- Section headers: Live / Final / Upcoming with game counts
+- Standings tab (both conferences) with W/L/PCT/GB/L10/STRK/HOME/ROAD/CONF/DIFF
+- Team logos and color-coded left-border accents throughout
+- Road/home split records on live, final, and scheduled game cards
+- Top stat leaders per game (2 leaders per team)
+- Broadcast network badges (ESPN, TNT, ABC, NBA TV, etc.)
+- Countdown timers on upcoming games ("in 2h 35m")
+- Venue/arena info on scheduled games
+- Clickable game cards → ESPN game pages
+- Browser tab updates with live scores while games are active
+- Dark/light mode toggle (persists to localStorage)
+- Mobile-optimized responsive layout
+
+## Stats
+
+- **37 autonomous improvements** as of March 2026
+- **0 reverts** — every change has been kept
+- Runs on a ~4-minute loop, 24/7
 
 ## How it self-improves
 
