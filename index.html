@@ -72,6 +72,12 @@
   .qtr-score { font-size: 11px; }
   .qtr-score.current { color: var(--gold); }
 
+  .section-label { padding: 10px 14px 4px; font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .section-count { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 1px 6px; font-size: 9px; font-weight: 600; color: var(--muted); }
+  .section-label.live-label { color: var(--green); }
+  .section-label.live-label .section-count { color: var(--green); border-color: var(--green); }
+
   .empty { text-align: center; padding: 60px 20px; color: var(--muted); }
   .empty h2 { font-size: 14px; margin-bottom: 8px; }
 
@@ -439,15 +445,27 @@ async function load(showSpinner = false) {
       return;
     }
 
-    // Sort: live first, then final, then scheduled
-    events.sort((a, b) => {
-      const order = {in: 0, post: 1, pre: 2};
-      const sa = order[a.status?.type?.state] ?? 3;
-      const sb = order[b.status?.type?.state] ?? 3;
-      return sa - sb;
-    });
+    // Group by state for section headers
+    const liveEvts = events.filter(e => e.status?.type?.state === 'in');
+    const finalEvts = events.filter(e => e.status?.type?.state === 'post');
+    const preEvts = events.filter(e => e.status?.type?.state === 'pre');
+    // Sort within groups: scheduled by tip-off time, others by date
+    const byDate = (a, b) => new Date(a.date || 0) - new Date(b.date || 0);
+    liveEvts.sort(byDate);
+    finalEvts.sort(byDate);
+    preEvts.sort(byDate);
 
-    container.innerHTML = `<div class="games">${events.map(renderGame).join('')}</div>`;
+    let html = '';
+    const addGroup = (label, evts, cls) => {
+      if (!evts.length) return;
+      html += `<div class="section-label${cls ? ' ' + cls : ''}">${label}<span class="section-count">${evts.length}</span></div>`;
+      html += `<div class="games">${evts.map(renderGame).join('')}</div>`;
+    };
+    addGroup('Live', liveEvts, 'live-label');
+    addGroup('Final', finalEvts, '');
+    addGroup('Upcoming', preEvts, '');
+
+    container.innerHTML = html;
     label.textContent = `updated ${new Date().toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'})}`;
     updatePageTitle(events);
 
