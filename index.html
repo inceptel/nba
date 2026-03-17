@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NBA Scores</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --surface2: #1a1a24;
+    --border: #252535;
+    --text: #e8e8f0;
+    --muted: #6b6b80;
+    --accent: #4f8ef7;
+    --green: #3ddc84;
+    --red: #ff4d4d;
+    --gold: #f5c842;
+  }
+  body { background: var(--bg); color: var(--text); font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace; font-size: 13px; min-height: 100vh; }
+
+  header { padding: 16px 20px 12px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: var(--bg); z-index: 10; }
+  .header-left { display: flex; align-items: baseline; gap: 12px; }
+  h1 { font-size: 15px; font-weight: 700; letter-spacing: 0.1em; color: var(--text); }
+  .date { color: var(--muted); font-size: 12px; }
+  .refresh-info { color: var(--muted); font-size: 11px; display: flex; align-items: center; gap: 6px; }
+  .live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); display: inline-block; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+  .games { padding: 12px; display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 10px; }
+
+  .game { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; transition: border-color 0.2s; }
+  .game:hover { border-color: #333348; }
+  .game.live { border-color: #2a4a2a; }
+  .game.live .game-status { color: var(--green); }
+  .game.final .game-status { color: var(--muted); }
+  .game.scheduled .game-status { color: var(--accent); }
+
+  .game-header { padding: 8px 12px; background: var(--surface2); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
+  .game-status { font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; }
+  .broadcast { font-size: 10px; color: var(--muted); }
+
+  .teams { padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; }
+  .team-row { display: flex; align-items: center; gap: 8px; padding: 4px 0; }
+  .team-row.winner .team-name { color: var(--text); font-weight: 700; }
+  .team-row.loser .team-name { color: var(--muted); }
+  .team-logo { width: 28px; height: 28px; object-fit: contain; flex-shrink: 0; }
+  .team-logo-placeholder { width: 28px; height: 28px; flex-shrink: 0; border-radius: 50%; background: var(--border); display: flex; align-items: center; justify-content: center; font-size: 9px; color: var(--muted); font-weight: 700; }
+  .team-info { flex: 1; min-width: 0; }
+  .team-name { font-size: 13px; font-weight: 500; }
+  .team-record { font-size: 10px; color: var(--muted); margin-top: 1px; }
+  .team-score { font-size: 22px; font-weight: 700; min-width: 40px; text-align: right; }
+  .team-row.winner .team-score { color: var(--text); }
+  .team-row.loser .team-score { color: var(--muted); }
+  .no-score { font-size: 13px; color: var(--muted); min-width: 40px; text-align: right; }
+
+  .game-footer { padding: 8px 12px; border-top: 1px solid var(--border); }
+  .leaders { display: flex; gap: 8px; flex-wrap: wrap; }
+  .leader { background: var(--surface2); border-radius: 4px; padding: 4px 7px; font-size: 10px; color: var(--muted); white-space: nowrap; }
+  .leader span { color: var(--text); font-weight: 600; }
+
+  .line-scores { display: flex; gap: 2px; margin-bottom: 6px; overflow-x: auto; }
+  .qtr { text-align: center; min-width: 28px; }
+  .qtr-label { font-size: 9px; color: var(--muted); margin-bottom: 2px; }
+  .qtr-score { font-size: 11px; }
+  .qtr-score.current { color: var(--gold); }
+
+  .empty { text-align: center; padding: 60px 20px; color: var(--muted); }
+  .empty h2 { font-size: 14px; margin-bottom: 8px; }
+
+  .loading { text-align: center; padding: 60px; color: var(--muted); }
+  .spinner { display: inline-block; width: 20px; height: 20px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 12px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .error { background: #1a0a0a; border: 1px solid #3a1a1a; border-radius: 8px; padding: 16px; margin: 12px; color: #ff6b6b; font-size: 12px; }
+
+  @media (max-width: 400px) {
+    .games { grid-template-columns: 1fr; padding: 8px; }
+    .team-score { font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <h1>NBA</h1>
+    <span class="date" id="date-label"></span>
+  </div>
+  <div class="refresh-info">
+    <span class="live-dot" id="live-dot" style="display:none"></span>
+    <span id="refresh-label">loading...</span>
+  </div>
+</header>
+
+<div id="games-container">
+  <div class="loading">
+    <div class="spinner"></div><br>Loading scores...
+  </div>
+</div>
+
+<script>
+const TEAM_COLORS = {
+  'ATL':['#C1062A','#FDB927'],'BOS':['#007A33','#BA9653'],'BKN':['#000000','#FFFFFF'],
+  'CHA':['#1D1160','#00788C'],'CHI':['#CE1141','#000000'],'CLE':['#860038','#FDBB30'],
+  'DAL':['#00538C','#B8C4CA'],'DEN':['#0E2240','#FEC524'],'DET':['#C8102E','#006BB6'],
+  'GSW':['#1D428A','#FFC72C'],'HOU':['#CE1141','#000000'],'IND':['#002D62','#FDBB30'],
+  'LAC':['#C8102E','#1D428A'],'LAL':['#552583','#FDB927'],'MEM':['#5D76A9','#12173F'],
+  'MIA':['#98002E','#F9A01B'],'MIL':['#00471B','#EEE1C6'],'MIN':['#0C2340','#236192'],
+  'NOP':['#0C2340','#C8102E'],'NYK':['#006BB6','#F58426'],'OKC':['#007AC1','#EF3B24'],
+  'ORL':['#0077C0','#C4CED4'],'PHI':['#006BB6','#ED174C'],'PHX':['#1D1160','#E56020'],
+  'POR':['#E03A3E','#000000'],'SAC':['#5A2D81','#63727A'],'SAS':['#C4CED4','#000000'],
+  'TOR':['#CE1141','#000000'],'UTA':['#002B5C','#00471B'],'WAS':['#002B5C','#E31837'],
+};
+
+let refreshTimer, countdownTimer, secondsLeft = 30;
+let hasLiveGames = false;
+
+function pad(n) { return String(n).padStart(2, '0'); }
+
+function formatTime(isoStr) {
+  const d = new Date(isoStr);
+  const h = d.getHours(), m = d.getMinutes();
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  return `${h % 12 || 12}:${pad(m)} ${ampm}`;
+}
+
+function teamInitials(name) {
+  return name.split(' ').map(w => w[0]).join('').slice(0,3).toUpperCase();
+}
+
+function renderLeaders(competitors) {
+  const leaders = [];
+  for (const team of competitors) {
+    const stats = team.leaders || [];
+    for (const cat of stats) {
+      const l = cat.leaders?.[0];
+      if (!l) continue;
+      const name = l.athlete?.shortName || l.athlete?.displayName || '';
+      const val = l.value;
+      const label = cat.abbreviation || cat.name;
+      if (name && val !== undefined) {
+        leaders.push(`<div class="leader">${name} <span>${Math.round(val)} ${label}</span></div>`);
+      }
+      if (leaders.length >= 4) break;
+    }
+    if (leaders.length >= 4) break;
+  }
+  return leaders.length ? `<div class="leaders">${leaders.join('')}</div>` : '';
+}
+
+function renderLineScores(competitor) {
+  const linescores = competitor.linescores || [];
+  if (!linescores.length) return '';
+  return linescores.map((ls, i) => {
+    const label = i < 4 ? `Q${i+1}` : `OT${i-3}`;
+    return `<div class="qtr"><div class="qtr-label">${label}</div><div class="qtr-score">${ls.value ?? '-'}</div></div>`;
+  }).join('');
+}
+
+function renderGame(event) {
+  const comp = event.competitions?.[0];
+  if (!comp) return '';
+  const status = event.status;
+  const stateType = status.type?.state; // pre, in, post
+  const statusDesc = status.type?.shortDetail || status.type?.description || '';
+  const displayClock = status.displayClock;
+  const period = status.period;
+
+  const isLive = stateType === 'in';
+  const isFinal = stateType === 'post';
+  const isScheduled = stateType === 'pre';
+
+  const [away, home] = comp.competitors[0]?.homeAway === 'home'
+    ? [comp.competitors[1], comp.competitors[0]]
+    : [comp.competitors[0], comp.competitors[1]];
+
+  const awayScore = parseInt(away.score) || 0;
+  const homeScore = parseInt(home.score) || 0;
+  const awayWin = isFinal && awayScore > homeScore;
+  const homeWin = isFinal && homeScore > awayScore;
+
+  const awayAbbr = away.team.abbreviation;
+  const homeAbbr = home.team.abbreviation;
+  const awayColor = TEAM_COLORS[awayAbbr]?.[0] || '#666';
+  const homeColor = TEAM_COLORS[homeAbbr]?.[0] || '#666';
+
+  let statusText = statusDesc;
+  if (isLive && displayClock && period) {
+    statusText = `Q${period} ${displayClock}`;
+  }
+
+  const broadcast = comp.broadcasts?.[0]?.names?.[0] || '';
+  const startTime = isScheduled ? formatTime(comp.date || event.date) : '';
+
+  const scoreOrTime = (team, isWinner, isLoser) => {
+    if (isScheduled) return `<div class="no-score">${startTime}</div>`;
+    return `<div class="team-score">${team.score ?? '-'}</div>`;
+  };
+
+  // Line scores for live/final
+  let linescoresHtml = '';
+  if ((isLive || isFinal) && (away.linescores?.length || home.linescores?.length)) {
+    const awayLines = renderLineScores(away);
+    const homeLines = renderLineScores(home);
+    if (awayLines || homeLines) {
+      linescoresHtml = `
+        <div style="padding: 6px 12px; border-bottom: 1px solid var(--border); display:flex; flex-direction:column; gap:4px;">
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span style="width:28px;font-size:10px;color:var(--muted)">${awayAbbr}</span>
+            <div class="line-scores">${awayLines}</div>
+          </div>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span style="width:28px;font-size:10px;color:var(--muted)">${homeAbbr}</span>
+            <div class="line-scores">${homeLines}</div>
+          </div>
+        </div>`;
+    }
+  }
+
+  const leadersHtml = (isLive || isFinal) ? renderLeaders(comp.competitors) : '';
+
+  return `
+<div class="game ${isLive ? 'live' : isFinal ? 'final' : 'scheduled'}">
+  <div class="game-header">
+    <span class="game-status">${statusText}</span>
+    ${broadcast ? `<span class="broadcast">${broadcast}</span>` : ''}
+  </div>
+  <div class="teams">
+    <div class="team-row ${awayWin ? 'winner' : isFinal ? 'loser' : ''}">
+      <div class="team-logo-placeholder" style="background:${awayColor}20;color:${awayColor}">${awayAbbr}</div>
+      <div class="team-info">
+        <div class="team-name">${away.team.displayName}</div>
+        <div class="team-record">${away.records?.[0]?.summary || ''}</div>
+      </div>
+      ${isScheduled ? '' : `<div class="team-score ${awayWin ? '' : isFinal ? '' : ''}">${away.score ?? '-'}</div>`}
+      ${isScheduled ? `<div class="no-score">${startTime}</div>` : ''}
+    </div>
+    <div class="team-row ${homeWin ? 'winner' : isFinal ? 'loser' : ''}">
+      <div class="team-logo-placeholder" style="background:${homeColor}20;color:${homeColor}">${homeAbbr}</div>
+      <div class="team-info">
+        <div class="team-name">${home.team.displayName}</div>
+        <div class="team-record">${home.records?.[0]?.summary || ''}</div>
+      </div>
+      ${isScheduled ? '' : `<div class="team-score">${home.score ?? '-'}</div>`}
+      ${isScheduled ? `<div class="no-score">&nbsp;</div>` : ''}
+    </div>
+  </div>
+  ${linescoresHtml}
+  ${leadersHtml ? `<div class="game-footer">${leadersHtml}</div>` : ''}
+</div>`;
+}
+
+async function fetchGames(dateStr) {
+  const url = `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard${dateStr ? `?dates=${dateStr}` : ''}`;
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  return r.json();
+}
+
+function todayStr() {
+  const d = new Date();
+  return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}`;
+}
+
+function yesterdayStr() {
+  const d = new Date(); d.setDate(d.getDate()-1);
+  return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}`;
+}
+
+async function load() {
+  const container = document.getElementById('games-container');
+  const label = document.getElementById('refresh-label');
+  const liveDot = document.getElementById('live-dot');
+  const dateLabel = document.getElementById('date-label');
+
+  try {
+    let data = await fetchGames(todayStr());
+    let events = data.events || [];
+    let usingYesterday = false;
+
+    if (!events.length) {
+      data = await fetchGames(yesterdayStr());
+      events = data.events || [];
+      usingYesterday = true;
+    }
+
+    // Date label
+    const calDate = data.day?.date || data.leagues?.[0]?.calendar?.[0];
+    const displayDate = new Date().toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric'});
+    dateLabel.textContent = usingYesterday ? `Yesterday · ${displayDate}` : `Today · ${displayDate}`;
+
+    hasLiveGames = events.some(e => e.status?.type?.state === 'in');
+    liveDot.style.display = hasLiveGames ? 'inline-block' : 'none';
+
+    if (!events.length) {
+      container.innerHTML = `<div class="empty"><h2>No games${usingYesterday ? ' recently' : ' today'}</h2><p style="margin-top:8px;font-size:11px">Check back later</p></div>`;
+      return;
+    }
+
+    // Sort: live first, then final, then scheduled
+    events.sort((a, b) => {
+      const order = {in: 0, post: 1, pre: 2};
+      const sa = order[a.status?.type?.state] ?? 3;
+      const sb = order[b.status?.type?.state] ?? 3;
+      return sa - sb;
+    });
+
+    container.innerHTML = `<div class="games">${events.map(renderGame).join('')}</div>`;
+    label.textContent = `updated ${new Date().toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'})}`;
+
+  } catch (e) {
+    container.innerHTML = `<div class="error">Failed to load scores: ${e.message}<br><br><small>Will retry in 30s</small></div>`;
+    label.textContent = 'error';
+    console.error(e);
+  }
+}
+
+function startCountdown() {
+  clearInterval(countdownTimer);
+  secondsLeft = hasLiveGames ? 20 : 60;
+  countdownTimer = setInterval(() => {
+    secondsLeft--;
+    if (secondsLeft <= 0) {
+      clearInterval(countdownTimer);
+      load().then(startCountdown);
+    }
+  }, 1000);
+}
+
+load().then(startCountdown);
+</script>
+</body>
+</html>
