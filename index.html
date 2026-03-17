@@ -221,9 +221,7 @@ function pad(n) { return String(n).padStart(2, '0'); }
 
 function formatTime(isoStr) {
   const d = new Date(isoStr);
-  const h = d.getHours(), m = d.getMinutes();
-  const ampm = h >= 12 ? 'PM' : 'AM';
-  return `${h % 12 || 12}:${pad(m)} ${ampm}`;
+  return d.toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit', timeZoneName: 'short'});
 }
 
 function dateStrForOffset(offset) {
