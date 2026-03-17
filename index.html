@@ -638,8 +638,9 @@ async function loadStandings() {
         const diffHtml = diffColor ? `<span style="color:${diffColor}">${diffDisplay}</span>` : diffDisplay;
         const teamColor = TEAM_COLORS[abbr]?.[0] || '#555';
         const playoffLine = idx === 6 ? ' class="playoffs-line"' : idx === 10 ? ' class="playin-line"' : '';
+        const seedColor = idx < 6 ? 'var(--gold)' : idx < 10 ? 'var(--accent)' : 'var(--muted)';
         html += `<tr${playoffLine}>
-          <td style="border-left:3px solid ${teamColor}99"><span class="standings-rank">${idx+1}</span> <img class="standings-team-logo" src="${logoUrl}" alt="${abbr}" onerror="this.style.display='none'"><span class="standings-team-name">${displayName}</span></td>
+          <td style="border-left:3px solid ${teamColor}99"><span class="standings-rank" style="color:${seedColor}">${idx+1}</span> <img class="standings-team-logo" src="${logoUrl}" alt="${abbr}" onerror="this.style.display='none'"><span class="standings-team-name">${displayName}</span></td>
           <td>${wins}</td>
           <td>${losses}</td>
           <td class="standings-pct">${pctDisplay}</td>
