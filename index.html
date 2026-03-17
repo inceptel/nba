@@ -617,10 +617,20 @@ async function loadStandings() {
         const streakVal = streakRaw !== undefined && streakRaw !== '' ? (streakRaw > 0 ? `W${Math.abs(streakRaw)}` : `L${Math.abs(streakRaw)}`) : '-';
         const streakColor = streakRaw > 0 ? 'var(--green)' : streakRaw < 0 ? 'var(--red)' : '';
         const streakDisplay = streakColor ? `<span style="color:${streakColor};font-weight:600">${streakVal}</span>` : streakVal;
-        const l10 = statsDisplay['Last Ten Games'] ?? statsDisplay['lastTenGames'] ?? statsDisplay['l10'] ?? '-';
+        const l10Raw = statsDisplay['Last Ten Games'] ?? statsDisplay['lastTenGames'] ?? statsDisplay['l10'] ?? '-';
         const homeRecord = statsDisplay['Home'] ?? statsDisplay['homeRecord'] ?? statsDisplay['home'] ?? '-';
         const roadRecord = statsDisplay['Road'] ?? statsDisplay['roadRecord'] ?? statsDisplay['road'] ?? '-';
         const confRecord = statsDisplay['vsConference'] ?? statsDisplay['Conference'] ?? statsDisplay['conference'] ?? '-';
+        const colorRecord = (rec) => {
+          if (!rec || rec === '-') return rec;
+          const m = rec.match(/^(\d+)-(\d+)$/);
+          if (!m) return rec;
+          const w = parseInt(m[1]), l = parseInt(m[2]);
+          if (w > l) return `<span style="color:var(--green)">${rec}</span>`;
+          if (l > w) return `<span style="color:var(--red)">${rec}</span>`;
+          return rec;
+        };
+        const l10 = colorRecord(l10Raw);
         const diffRaw = stats['differential'] ?? stats['pointDifferential'] ?? stats['avgPointDifferential'] ?? stats['pointsFor'] !== undefined ? (parseFloat(stats['pointsFor'] || 0) - parseFloat(stats['pointsAgainst'] || 0)) : undefined;
         const diffVal = diffRaw !== undefined && diffRaw !== '-' ? parseFloat(diffRaw) : null;
         const diffDisplay = diffVal !== null && !isNaN(diffVal) ? (diffVal > 0 ? `+${diffVal.toFixed(1)}` : diffVal.toFixed(1)) : '-';
@@ -635,9 +645,9 @@ async function loadStandings() {
           <td class="standings-pct">${pctDisplay}</td>
           <td class="standings-gb">${gbDisplay}</td>
           <td>${diffHtml}</td>
-          <td class="standings-l10">${confRecord}</td>
-          <td class="standings-l10">${homeRecord}</td>
-          <td class="standings-l10">${roadRecord}</td>
+          <td class="standings-l10">${colorRecord(confRecord)}</td>
+          <td class="standings-l10">${colorRecord(homeRecord)}</td>
+          <td class="standings-l10">${colorRecord(roadRecord)}</td>
           <td class="standings-l10">${l10}</td>
           <td>${streakDisplay}</td>
         </tr>`;
