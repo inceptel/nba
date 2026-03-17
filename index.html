@@ -186,6 +186,9 @@ function renderGame(event) {
   const awayColor = TEAM_COLORS[awayAbbr]?.[0] || '#666';
   const homeColor = TEAM_COLORS[homeAbbr]?.[0] || '#666';
 
+  const awayLogoUrl = away.team.logos?.[0]?.href || `https://a.espncdn.com/i/teamlogos/nba/500/${awayAbbr.toLowerCase()}.png`;
+  const homeLogoUrl = home.team.logos?.[0]?.href || `https://a.espncdn.com/i/teamlogos/nba/500/${homeAbbr.toLowerCase()}.png`;
+
   let statusText = statusDesc;
   if (isLive && displayClock && period) {
     statusText = `Q${period} ${displayClock}`;
@@ -229,7 +232,7 @@ function renderGame(event) {
   </div>
   <div class="teams">
     <div class="team-row ${awayWin ? 'winner' : isFinal ? 'loser' : ''}">
-      <div class="team-logo-placeholder" style="background:${awayColor}20;color:${awayColor}">${awayAbbr}</div>
+      <img class="team-logo" src="${awayLogoUrl}" alt="${awayAbbr}" onerror="this.outerHTML='<div class=\\'team-logo-placeholder\\' style=\\'background:${awayColor}20;color:${awayColor}\\'>${awayAbbr}</div>'">
       <div class="team-info">
         <div class="team-name">${away.team.displayName}</div>
         <div class="team-record">${away.records?.[0]?.summary || ''}</div>
@@ -237,7 +240,7 @@ function renderGame(event) {
       ${isScheduled ? '' : `<div class="team-score ${awayWin ? '' : isFinal ? '' : ''}">${away.score ?? '-'}</div>`}
     </div>
     <div class="team-row ${homeWin ? 'winner' : isFinal ? 'loser' : ''}">
-      <div class="team-logo-placeholder" style="background:${homeColor}20;color:${homeColor}">${homeAbbr}</div>
+      <img class="team-logo" src="${homeLogoUrl}" alt="${homeAbbr}" onerror="this.outerHTML='<div class=\\'team-logo-placeholder\\' style=\\'background:${homeColor}20;color:${homeColor}\\'>${homeAbbr}</div>'">
       <div class="team-info">
         <div class="team-name">${home.team.displayName}</div>
         <div class="team-record">${home.records?.[0]?.summary || ''}</div>

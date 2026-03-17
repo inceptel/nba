@@ -86,7 +86,7 @@ Mark fixed issues with ~~strikethrough~~ rather than deleting them.
 - HIGH: Scheduled games show tip-off time in away score column — layout is wrong (check `homeAway` field for scheduled game rendering, not just live/final)
 - HIGH: No loading state shown while API fetches — user sees blank content briefly
 - MEDIUM: No standings tab — would be very useful alongside scores
-- MEDIUM: Team logos are text initials — try fetching ESPN team logo URLs
+- ~~MEDIUM: Team logos are text initials — try fetching ESPN team logo URLs~~
 - MEDIUM: Player leader stats missing from many games — check API response structure
 - LOW: No dark/light mode toggle
 - LOW: Mobile: game cards could be more compact
