@@ -43,9 +43,7 @@ h1 { font-size: 22px; font-weight: 700; color: #fff; letter-spacing: -0.5px; }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
 .total-keeps { color: var(--text); font-size: 14px; font-weight: 600; }
 
-.cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 28px; }
-@media (max-width: 900px) { .cards { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 480px) { .cards { grid-template-columns: 1fr; } }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 480px)); gap: 14px; margin-bottom: 28px; }
 
 .card {
   background: var(--bg2);
@@ -104,6 +102,10 @@ h1 { font-size: 22px; font-weight: 700; color: #fff; letter-spacing: -0.5px; }
 .act-inst.nba       { color: var(--nba); }
 .act-inst.dashboard { color: var(--dashboard); }
 .act-desc { color: #cbd5e1; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.act-status { font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 99px; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+.act-status.keep   { background: #14532d; color: #4ade80; }
+.act-status.revert { background: #3b1515; color: #f87171; }
+.act-status.crash  { background: #451a03; color: #fbbf24; }
 
 .updated { color: var(--muted); font-size: 11px; }
 </style>
@@ -181,6 +183,7 @@ function renderActivity(recent) {
     <div class="activity-row">
       <span class="act-time">${relTime(r.time)}</span>
       <span class="act-inst ${r.instance}">${r.instance}</span>
+      <span class="act-status ${r.status || ''}">${r.status || '?'}</span>
       <span class="act-desc">${r.desc}</span>
     </div>`).join('');
 }
@@ -192,7 +195,7 @@ async function load() {
     const data = await r.json();
     document.getElementById('total-keeps').textContent =
       data.instances.reduce((s, i) => s + i.keeps, 0).toLocaleString();
-    document.getElementById('updated').textContent = 'updated ' + fmtTime(data.updated);
+    document.getElementById('updated').textContent = 'updated ' + relTime(data.updated);
     document.getElementById('cards').innerHTML = data.instances.map(i => renderCard(i, data.recent)).join('');
     document.getElementById('activity').innerHTML = renderActivity(data.recent);
   } catch (e) {

@@ -1,18 +1,23 @@
 {
-  "updated": "2026-03-17T23:51:11.642745+00:00",
+  "updated": "2026-03-17T23:58:39.585321+00:00",
   "instances": [
     {
       "name": "nba",
       "url": "https://allan.feather-cloud.dev/public/nba/",
       "running": true,
-      "keeps": 45,
+      "keeps": 46,
       "reverts": 0,
       "crashes": 0,
-      "last_keep": "Add TODAY shortcut button to date navigation \u2014 button appears between date label and next arrow when",
-      "last_time": "2026-03-17T23:48:18Z"
+      "last_keep": "Add standings refresh button and last-updated timestamp \u2014 standings tab now shows 'Updated X:XX PM \u00b7",
+      "last_time": "2026-03-17T23:52:26Z"
     }
   ],
   "recent": [
+    {
+      "time": "2026-03-17T23:52:26Z",
+      "instance": "nba",
+      "desc": "Add standings refresh button and last-updated timestamp \u2014 standings tab now shows 'Updated X:XX PM \u00b7"
+    },
     {
       "time": "2026-03-17T23:48:18Z",
       "instance": "nba",
@@ -57,11 +62,6 @@
       "time": "2026-03-17T23:19:35Z",
       "instance": "nba",
       "desc": "Add DIFF (point differential) column to standings table \u2014 shows season-aggregate point differential "
-    },
-    {
-      "time": "2026-03-17T23:17:25Z",
-      "instance": "nba",
-      "desc": "Add CONF (conference) record column to standings table \u2014 shows conference W-L record (e.g. '28-14') "
     }
   ]
 }
