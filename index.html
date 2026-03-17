@@ -78,6 +78,28 @@
 
   .error { background: #1a0a0a; border: 1px solid #3a1a1a; border-radius: 8px; padding: 16px; margin: 12px; color: #ff6b6b; font-size: 12px; }
 
+  .tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); padding: 0 12px; background: var(--bg); }
+  .tab { padding: 8px 14px; font-size: 12px; font-weight: 600; letter-spacing: 0.05em; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; text-transform: uppercase; transition: color 0.15s, border-color 0.15s; font-family: inherit; background: none; border-top: none; border-left: none; border-right: none; }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab:hover:not(.active) { color: var(--text); }
+
+  .standings { padding: 12px; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; }
+  .standings-conf { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .standings-conf-header { padding: 8px 12px; background: var(--surface2); border-bottom: 1px solid var(--border); font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: var(--accent); text-transform: uppercase; }
+  .standings-table { width: 100%; border-collapse: collapse; }
+  .standings-table th { padding: 5px 8px; font-size: 10px; color: var(--muted); font-weight: 600; text-align: right; border-bottom: 1px solid var(--border); }
+  .standings-table th:first-child { text-align: left; padding-left: 12px; }
+  .standings-table td { padding: 5px 8px; font-size: 11px; text-align: right; border-bottom: 1px solid var(--border); }
+  .standings-table td:first-child { text-align: left; padding-left: 12px; }
+  .standings-table tr:last-child td { border-bottom: none; }
+  .standings-table tr:hover td { background: var(--surface2); }
+  .standings-rank { color: var(--muted); font-size: 10px; min-width: 14px; display: inline-block; }
+  .standings-team-logo { width: 18px; height: 18px; object-fit: contain; vertical-align: middle; margin-right: 5px; }
+  .standings-team-name { vertical-align: middle; }
+  .standings-gb { color: var(--muted); }
+  .standings-pct { color: var(--text); font-weight: 600; }
+  .playoffs-line td { border-top: 2px solid var(--accent) !important; }
+
   @media (max-width: 400px) {
     .games { grid-template-columns: 1fr; padding: 8px; }
     .team-score { font-size: 18px; }
@@ -89,7 +111,7 @@
 <header>
   <div class="header-left">
     <h1>NBA</h1>
-    <div class="date-nav">
+    <div class="date-nav" id="date-nav">
       <button class="nav-btn" id="prev-btn" title="Previous day">&#8249;</button>
       <span class="date" id="date-label"></span>
       <button class="nav-btn" id="next-btn" title="Next day">&#8250;</button>
@@ -101,9 +123,24 @@
   </div>
 </header>
 
-<div id="games-container">
-  <div class="loading">
-    <div class="spinner"></div><br>Loading scores...
+<div class="tabs">
+  <button class="tab active" id="tab-scores" onclick="switchTab('scores')">Scores</button>
+  <button class="tab" id="tab-standings" onclick="switchTab('standings')">Standings</button>
+</div>
+
+<div id="scores-panel">
+  <div id="games-container">
+    <div class="loading">
+      <div class="spinner"></div><br>Loading scores...
+    </div>
+  </div>
+</div>
+
+<div id="standings-panel" style="display:none">
+  <div id="standings-container">
+    <div class="loading">
+      <div class="spinner"></div><br>Loading standings...
+    </div>
   </div>
 </div>
 
@@ -377,6 +414,73 @@ document.getElementById('next-btn').addEventListener('click', () => {
 });
 
 load().then(startCountdown);
+
+let standingsLoaded = false;
+
+function switchTab(tab) {
+  document.getElementById('tab-scores').classList.toggle('active', tab === 'scores');
+  document.getElementById('tab-standings').classList.toggle('active', tab === 'standings');
+  document.getElementById('scores-panel').style.display = tab === 'scores' ? '' : 'none';
+  document.getElementById('standings-panel').style.display = tab === 'standings' ? '' : 'none';
+  document.getElementById('date-nav').style.display = tab === 'scores' ? '' : 'none';
+  if (tab === 'standings' && !standingsLoaded) {
+    standingsLoaded = true;
+    loadStandings();
+  }
+}
+
+async function loadStandings() {
+  const container = document.getElementById('standings-container');
+  try {
+    const r = await fetch('https://site.api.espn.com/apis/v2/sports/basketball/nba/standings');
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    const data = await r.json();
+    const children = data.children || [];
+    let html = '<div class="standings">';
+    for (const conf of children) {
+      const confName = conf.name || conf.abbreviation || '';
+      const standings = conf.standings?.entries || [];
+      if (!standings.length) continue;
+      html += `<div class="standings-conf">
+        <div class="standings-conf-header">${confName}</div>
+        <table class="standings-table">
+          <thead><tr>
+            <th>Team</th><th>W</th><th>L</th><th>PCT</th><th>GB</th><th>STRK</th>
+          </tr></thead>
+          <tbody>`;
+      standings.forEach((entry, idx) => {
+        const team = entry.team;
+        const abbr = team?.abbreviation || '';
+        const logoUrl = team?.logos?.[0]?.href || `https://a.espncdn.com/i/teamlogos/nba/500/${abbr.toLowerCase()}.png`;
+        const displayName = team?.shortDisplayName || team?.displayName || abbr;
+        const stats = {};
+        for (const s of (entry.stats || [])) { stats[s.name] = s.value ?? s.displayValue; }
+        const wins = stats['wins'] ?? stats['overall.wins'] ?? '-';
+        const losses = stats['losses'] ?? stats['overall.losses'] ?? '-';
+        const pct = stats['winPercent'] ?? stats['winpercent'] ?? '';
+        const pctDisplay = pct !== '' && pct !== '-' ? parseFloat(pct).toFixed(3).replace(/^0/, '') : '-';
+        const gb = stats['gamesBehind'] ?? stats['gamesback'] ?? '-';
+        const gbDisplay = gb === 0 || gb === '0' ? '-' : gb;
+        const streakRaw = stats['streak'];
+        const streakDisplay = streakRaw !== undefined && streakRaw !== '' ? (streakRaw > 0 ? `W${Math.abs(streakRaw)}` : `L${Math.abs(streakRaw)}`) : '-';
+        const playoffLine = idx === 6 ? ' class="playoffs-line"' : '';
+        html += `<tr${playoffLine}>
+          <td><span class="standings-rank">${idx+1}</span> <img class="standings-team-logo" src="${logoUrl}" alt="${abbr}" onerror="this.style.display='none'"><span class="standings-team-name">${displayName}</span></td>
+          <td>${wins}</td>
+          <td>${losses}</td>
+          <td class="standings-pct">${pctDisplay}</td>
+          <td class="standings-gb">${gbDisplay}</td>
+          <td>${streakDisplay}</td>
+        </tr>`;
+      });
+      html += '</tbody></table></div>';
+    }
+    html += '</div>';
+    container.innerHTML = html;
+  } catch (e) {
+    container.innerHTML = `<div class="error">Failed to load standings: ${e.message}</div>`;
+  }
+}
 </script>
 </body>
 </html>
