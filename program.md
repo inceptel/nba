@@ -10,6 +10,7 @@
 - **URL to screenshot**: `https://allan.feather-cloud.dev/public/nba/`
 - **Repo**: `https://github.com/inceptel/nba`
 - **Data source**: ESPN unofficial API (no auth needed)
+- **Autoweb dashboard**: `https://allan.feather-cloud.dev/public/nba/autoweb-dashboard.html`
 
 ## What you CAN do
 

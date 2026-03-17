@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>autoweb</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0a0a0f;
+  --bg2: #111118;
+  --bg3: #1a1a24;
+  --border: #2a2a3a;
+  --text: #e2e8f0;
+  --muted: #64748b;
+  --feather: #818cf8;
+  --trading: #34d399;
+  --nba: #fb923c;
+  --dashboard: #a78bfa;
+}
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  min-height: 100vh;
+  padding: 24px;
+}
+header {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 28px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 16px;
+}
+h1 { font-size: 22px; font-weight: 700; color: #fff; letter-spacing: -0.5px; }
+.subtitle { color: var(--muted); font-size: 12px; }
+.header-right { margin-left: auto; display: flex; align-items: center; gap: 16px; color: var(--muted); font-size: 12px; }
+.pulse { width: 7px; height: 7px; border-radius: 50%; background: #22c55e; display: inline-block; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+.total-keeps { color: var(--text); font-size: 14px; font-weight: 600; }
+
+.cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 28px; }
+@media (max-width: 900px) { .cards { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px) { .cards { grid-template-columns: 1fr; } }
+
+.card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  border-left: 3px solid var(--border);
+}
+.card[data-instance="feather"]   { border-left-color: var(--feather); }
+.card[data-instance="trading"]   { border-left-color: var(--trading); }
+.card[data-instance="nba"]       { border-left-color: var(--nba); }
+.card[data-instance="dashboard"] { border-left-color: var(--dashboard); }
+
+.card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.card-name { font-size: 14px; font-weight: 700; color: #fff; }
+.status-pill {
+  font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 99px;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+.status-pill.running { background: #14532d; color: #4ade80; }
+.status-pill.stopped { background: #3b1515; color: #f87171; }
+
+.stats { display: flex; gap: 14px; margin-bottom: 12px; }
+.stat { flex: 1; }
+.stat-val { font-size: 22px; font-weight: 700; color: #fff; line-height: 1; }
+.stat-label { font-size: 10px; color: var(--muted); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
+.stat-val.keeps   { color: #4ade80; }
+.stat-val.reverts { color: #f87171; }
+.stat-val.crashes { color: #fbbf24; }
+
+.keep-rate {
+  font-size: 11px; margin-bottom: 6px; font-weight: 600;
+  display: flex; align-items: center; gap: 10px;
+}
+.run-rate { font-size: 10px; color: var(--muted); font-weight: 400; margin-left: auto; }
+.keep-rate-bar { height: 3px; background: var(--bg3); border-radius: 2px; margin-bottom: 10px; overflow: hidden; }
+.keep-rate-fill { height: 100%; border-radius: 2px; transition: width 0.6s ease; }
+.last-keep {
+  font-size: 11px; color: var(--muted); line-height: 1.5;
+  border-top: 1px solid var(--border); padding-top: 10px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.last-keep .ts { color: #475569; margin-right: 4px; }
+.card-link { font-size: 10px; color: var(--muted); text-decoration: none; display: block; margin-top: 8px; }
+.card-link:hover { color: var(--text); }
+
+.section-title { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+.activity { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.activity-row { display: flex; align-items: baseline; gap: 10px; padding: 8px 14px; border-bottom: 1px solid var(--border); font-size: 12px; }
+.activity-row:last-child { border-bottom: none; }
+.activity-row:hover { background: var(--bg3); }
+.act-time { color: var(--muted); font-size: 11px; white-space: nowrap; min-width: 62px; }
+.act-inst { font-size: 11px; font-weight: 600; min-width: 72px; }
+.act-inst.feather   { color: var(--feather); }
+.act-inst.trading   { color: var(--trading); }
+.act-inst.nba       { color: var(--nba); }
+.act-inst.dashboard { color: var(--dashboard); }
+.act-desc { color: #cbd5e1; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.updated { color: var(--muted); font-size: 11px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>autoweb</h1>
+  <span class="subtitle">autonomous improvement loops</span>
+  <div class="header-right">
+    <span><span class="pulse"></span>&nbsp;live</span>
+    <span><span id="total-keeps" class="total-keeps">—</span> keeps total</span>
+    <span id="updated" class="updated"></span>
+  </div>
+</header>
+
+<div id="cards" class="cards"></div>
+
+<div class="section-title">recent activity</div>
+<div id="activity" class="activity"></div>
+
+<script>
+function fmtTime(iso) {
+  if (!iso) return '';
+  return new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+}
+
+function relTime(iso) {
+  if (!iso) return '';
+  const diff = Math.floor((Date.now() - new Date(iso)) / 1000);
+  if (diff < 60) return diff + 's ago';
+  if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
+  if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
+  return Math.floor(diff / 86400) + 'd ago';
+}
+
+function keepRate(instName, recent) {
+  const hourAgo = Date.now() - 3600000;
+  return (recent || []).filter(r => r.instance === instName && new Date(r.time) > hourAgo).length;
+}
+
+function renderCard(inst, recent) {
+  return `
+    <div class="card" data-instance="${inst.name}">
+      <div class="card-header">
+        <span class="card-name">${inst.name}</span>
+        <span class="status-pill ${inst.running ? 'running' : 'stopped'}">${inst.running ? 'running' : 'stopped'}</span>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="stat-val keeps">${inst.keeps}</div><div class="stat-label">keeps</div></div>
+        <div class="stat"><div class="stat-val reverts">${inst.reverts}</div><div class="stat-label">reverts</div></div>
+        <div class="stat"><div class="stat-val crashes">${inst.crashes}</div><div class="stat-label">crashes</div></div>
+      </div>
+      ${(function() {
+          const total = inst.keeps + inst.reverts;
+          const rate = keepRate(inst.name, recent);
+          const rateStr = rate > 0 ? `<span class="run-rate">~${rate}/hr</span>` : '';
+          if (total === 0) return `<div class="keep-rate"><span style="color:#475569">no data</span>${rateStr}</div><div class="keep-rate-bar"><div class="keep-rate-fill" style="width:0%"></div></div>`;
+          const pct = Math.round(inst.keeps / total * 100);
+          const color = pct >= 90 ? '#4ade80' : pct >= 70 ? '#fbbf24' : '#f87171';
+          return `<div class="keep-rate"><span style="color:${color}">${pct}% kept</span><span style="color:#475569"> (${total} total)</span>${rateStr}</div><div class="keep-rate-bar"><div class="keep-rate-fill" style="width:${pct}%;background:${color}"></div></div>`;
+        })()}
+      <div class="last-keep">
+        ${inst.last_time ? `<span class="ts">${relTime(inst.last_time)}</span>` : ''}
+        ${inst.last_keep || '<em style="color:#475569">no keeps yet</em>'}
+      </div>
+      ${inst.url ? `<a class="card-link" href="${inst.url}" target="_blank">↗ ${inst.url.replace(/^https?:\/\//, '').replace(/\/$/, '')}</a>` : ''}
+    </div>`;
+}
+
+function renderActivity(recent) {
+  if (!recent || !recent.length)
+    return '<div class="activity-row"><span class="act-desc" style="color:#475569">no activity yet</span></div>';
+  return recent.map(r => `
+    <div class="activity-row">
+      <span class="act-time">${relTime(r.time)}</span>
+      <span class="act-inst ${r.instance}">${r.instance}</span>
+      <span class="act-desc">${r.desc}</span>
+    </div>`).join('');
+}
+
+async function load() {
+  try {
+    const r = await fetch('stats.json?_=' + Date.now());
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const data = await r.json();
+    document.getElementById('total-keeps').textContent =
+      data.instances.reduce((s, i) => s + i.keeps, 0).toLocaleString();
+    document.getElementById('updated').textContent = 'updated ' + relTime(data.updated);
+    document.getElementById('cards').innerHTML = data.instances.map(i => renderCard(i, data.recent)).join('');
+    document.getElementById('activity').innerHTML = renderActivity(data.recent);
+  } catch (e) {
+    document.getElementById('cards').innerHTML =
+      `<div style="grid-column:1/-1;color:#f87171;padding:32px;text-align:center">failed to load stats.json: ${e.message}</div>`;
+  }
+}
+
+load();
+setInterval(load, 30000);
+</script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+{
+  "updated": "2026-03-17T23:51:11.642745+00:00",
+  "instances": [
+    {
+      "name": "nba",
+      "url": "https://allan.feather-cloud.dev/public/nba/",
+      "running": true,
+      "keeps": 45,
+      "reverts": 0,
+      "crashes": 0,
+      "last_keep": "Add TODAY shortcut button to date navigation \u2014 button appears between date label and next arrow when",
+      "last_time": "2026-03-17T23:48:18Z"
+    }
+  ],
+  "recent": [
+    {
+      "time": "2026-03-17T23:48:18Z",
+      "instance": "nba",
+      "desc": "Add TODAY shortcut button to date navigation \u2014 button appears between date label and next arrow when"
+    },
+    {
+      "time": "2026-03-17T23:45:14Z",
+      "instance": "nba",
+      "desc": "Fix DIFF column operator precedence bug in standings \u2014 was always computing pointsFor-pointsAgainst "
+    },
+    {
+      "time": "2026-03-17T23:42:18Z",
+      "instance": "nba",
+      "desc": "Color-code seed numbers in standings \u2014 gold for playoff seeds 1-6, blue/accent for play-in seeds 7-1"
+    },
+    {
+      "time": "2026-03-17T23:40:06Z",
+      "instance": "nba",
+      "desc": "Color-code W-L records in standings (L10/HOME/ROAD/CONF) \u2014 green for winning records, red for losing"
+    },
+    {
+      "time": "2026-03-17T23:36:27Z",
+      "instance": "nba",
+      "desc": "Add local timezone abbreviation to game times \u2014 scheduled games now show e.g. '7:00 PM PST' instead "
+    },
+    {
+      "time": "2026-03-17T23:33:45Z",
+      "instance": "nba",
+      "desc": "Show scheduled game times in local timezone \u2014 replaced ESPN's ET-hardcoded time string (e.g. '7:00 P"
+    },
+    {
+      "time": "2026-03-17T23:30:54Z",
+      "instance": "nba",
+      "desc": "Make standings table horizontally scrollable with sticky team column \u2014 added overflow-x:auto scroll "
+    },
+    {
+      "time": "2026-03-17T23:23:56Z",
+      "instance": "nba",
+      "desc": "Add CLOSE badge to live games within 5 points \u2014 pulsing gold badge in game header gives at-a-glance "
+    },
+    {
+      "time": "2026-03-17T23:19:35Z",
+      "instance": "nba",
+      "desc": "Add DIFF (point differential) column to standings table \u2014 shows season-aggregate point differential "
+    },
+    {
+      "time": "2026-03-17T23:17:25Z",
+      "instance": "nba",
+      "desc": "Add CONF (conference) record column to standings table \u2014 shows conference W-L record (e.g. '28-14') "
+    }
+  ]
+}

@@ -576,6 +576,12 @@ if (localStorage.getItem('nba-theme') === 'light') {
 }
 
 let standingsLoaded = false;
+let standingsLastFetched = null;
+
+function refreshStandings() {
+  standingsLoaded = false;
+  loadStandings();
+}
 
 function switchTab(tab) {
   document.getElementById('tab-scores').classList.toggle('active', tab === 'scores');
@@ -667,7 +673,12 @@ async function loadStandings() {
       html += '</tbody></table></div></div>';
     }
     html += '</div>';
-    container.innerHTML = html;
+    standingsLastFetched = new Date();
+    const updatedBar = `<div style="padding:8px 14px 2px;display:flex;align-items:center;gap:8px;color:var(--muted);font-size:11px">
+      <span>Updated ${standingsLastFetched.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})}</span>
+      <button onclick="refreshStandings()" style="background:none;border:1px solid var(--border);color:var(--muted);font-size:11px;padding:2px 8px;border-radius:4px;cursor:pointer;font-family:inherit;transition:border-color 0.2s,color 0.2s" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">↺ Refresh</button>
+    </div>`;
+    container.innerHTML = updatedBar + html;
   } catch (e) {
     container.innerHTML = `<div class="error">Failed to load standings: ${e.message}</div>`;
   }
