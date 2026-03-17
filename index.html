@@ -207,6 +207,7 @@ function renderLeaders(competitors) {
   const leaders = [];
   for (const team of competitors) {
     const stats = team.leaders || [];
+    let teamCount = 0;
     for (const cat of stats) {
       const l = cat.leaders?.[0];
       if (!l) continue;
@@ -218,10 +219,10 @@ function renderLeaders(competitors) {
       const displayStr = String(displayVal);
       if (name && displayVal !== undefined && !displayStr.includes(',') && displayStr.length <= 12) {
         leaders.push(`<div class="leader">${name} <span>${displayVal} ${label}</span></div>`);
+        teamCount++;
       }
-      if (leaders.length >= 4) break;
+      if (teamCount >= 2) break; // max 2 per team so both teams are represented
     }
-    if (leaders.length >= 4) break;
   }
   return leaders.length ? `<div class="leaders">${leaders.join('')}</div>` : '';
 }
