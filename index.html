@@ -205,8 +205,9 @@ function renderLeaders(competitors) {
       const name = l.athlete?.shortName || l.athlete?.displayName || '';
       const val = l.value;
       const label = cat.abbreviation || cat.name;
-      if (name && val !== undefined) {
-        leaders.push(`<div class="leader">${name} <span>${Math.round(val)} ${label}</span></div>`);
+      const displayVal = l.displayValue ?? Math.round(val);
+      if (name && displayVal !== undefined) {
+        leaders.push(`<div class="leader">${name} <span>${displayVal} ${label}</span></div>`);
       }
       if (leaders.length >= 4) break;
     }
@@ -287,7 +288,7 @@ function renderGame(event) {
     }
   }
 
-  const leadersHtml = (isLive || isFinal) ? renderLeaders(comp.competitors) : '';
+  const leadersHtml = renderLeaders(comp.competitors);
 
   return `
 <div class="game ${isLive ? 'live' : isFinal ? 'final' : 'scheduled'}">
