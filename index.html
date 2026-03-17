@@ -208,7 +208,9 @@ function renderLeaders(competitors) {
       const val = l.value;
       const label = cat.abbreviation || cat.name;
       const displayVal = l.displayValue ?? Math.round(val);
-      if (name && displayVal !== undefined) {
+      // Skip verbose compound stat lines (e.g. "19.3 PPG, 4.8 RPG, 7.1 APG")
+      const displayStr = String(displayVal);
+      if (name && displayVal !== undefined && !displayStr.includes(',') && displayStr.length <= 12) {
         leaders.push(`<div class="leader">${name} <span>${displayVal} ${label}</span></div>`);
       }
       if (leaders.length >= 4) break;
