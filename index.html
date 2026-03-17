@@ -353,7 +353,7 @@ function renderGame(event) {
       <img class="team-logo" src="${awayLogoUrl}" alt="${awayAbbr}" onerror="this.outerHTML='<div class=\\'team-logo-placeholder\\' style=\\'background:${awayColor}20;color:${awayColor}\\'>${awayAbbr}</div>'">
       <div class="team-info">
         <div class="team-name">${away.team.displayName}</div>
-        <div class="team-record">${isScheduled ? (away.records?.[0]?.summary || '') : getRecord(away, 'road')}${!isScheduled && away.records?.find(r=>r.name==='road'||r.type==='road') ? '<span style="color:var(--muted);font-size:9px;margin-left:3px">ROAD</span>' : ''}</div>
+        <div class="team-record">${getRecord(away, 'road')}${away.records?.find(r=>r.name==='road'||r.type==='road') ? '<span style="color:var(--muted);font-size:9px;margin-left:3px">ROAD</span>' : ''}</div>
       </div>
       ${isScheduled ? '' : `<div class="team-score ${awayWin ? '' : isFinal ? '' : ''}">${away.score ?? '-'}</div>`}
     </div>
@@ -362,7 +362,7 @@ function renderGame(event) {
       <img class="team-logo" src="${homeLogoUrl}" alt="${homeAbbr}" onerror="this.outerHTML='<div class=\\'team-logo-placeholder\\' style=\\'background:${homeColor}20;color:${homeColor}\\'>${homeAbbr}</div>'">
       <div class="team-info">
         <div class="team-name">${home.team.displayName}${isScheduled ? '<span class="home-badge">HOME</span>' : ''}</div>
-        <div class="team-record">${isScheduled ? (home.records?.[0]?.summary || '') : getRecord(home, 'home')}${!isScheduled && home.records?.find(r=>r.name==='home'||r.type==='home') ? '<span style="color:var(--muted);font-size:9px;margin-left:3px">HOME</span>' : ''}</div>
+        <div class="team-record">${getRecord(home, 'home')}${home.records?.find(r=>r.name==='home'||r.type==='home') ? '<span style="color:var(--muted);font-size:9px;margin-left:3px">HOME</span>' : ''}</div>
       </div>
       ${isScheduled ? '' : `<div class="team-score">${home.score ?? '-'}</div>`}
     </div>
