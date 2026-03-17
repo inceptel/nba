@@ -263,6 +263,10 @@ function renderGame(event) {
   if (isLive && displayClock && period) {
     statusText = `Q${period} ${displayClock}`;
   }
+  if (isFinal && (awayScore || homeScore)) {
+    const margin = Math.abs(awayScore - homeScore);
+    statusText = `${statusDesc} · +${margin}`;
+  }
 
   const broadcast = comp.broadcasts?.[0]?.names?.[0] || '';
   const startTime = isScheduled ? formatTime(comp.date || event.date) : '';
