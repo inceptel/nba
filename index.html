@@ -323,8 +323,8 @@ function renderGame(event) {
 
   let statusText = statusDesc;
   if (isScheduled) {
-    // Strip redundant date prefix (e.g. "3/17 - 7:00 PM EDT" → "7:00 PM EDT")
-    statusText = statusDesc.replace(/^\d+\/\d+\s*[-–]\s*/, '');
+    // Show local time (not ET) so all users see game time in their timezone
+    statusText = formatTime(comp.date || event.date);
     // Add countdown for games within the next 24h
     const gameTime = new Date(comp.date || event.date);
     const diffMs = gameTime - Date.now();
