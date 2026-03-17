@@ -291,8 +291,10 @@ function renderGame(event) {
 
   const leadersHtml = renderLeaders(comp.competitors);
 
+  const accentColor = isFinal ? (homeWin ? homeColor : awayColor) : homeColor;
+
   return `
-<div class="game ${isLive ? 'live' : isFinal ? 'final' : 'scheduled'}">
+<div class="game ${isLive ? 'live' : isFinal ? 'final' : 'scheduled'}" style="border-left: 3px solid ${accentColor}99">
   <div class="game-header">
     <span class="game-status">${statusText}</span>
     ${broadcast ? `<span class="broadcast">${broadcast}</span>` : ''}
