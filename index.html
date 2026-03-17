@@ -103,6 +103,7 @@
   .standings-l10 { color: var(--muted); }
   .standings-pct { color: var(--text); font-weight: 600; }
   .playoffs-line td { border-top: 2px solid var(--accent) !important; }
+  .playin-line td { border-top: 1px dashed var(--muted) !important; }
 
   @media (max-width: 400px) {
     .games { grid-template-columns: 1fr; padding: 8px; }
@@ -475,7 +476,7 @@ async function loadStandings() {
         const streakColor = streakRaw > 0 ? 'var(--green)' : streakRaw < 0 ? 'var(--red)' : '';
         const streakDisplay = streakColor ? `<span style="color:${streakColor};font-weight:600">${streakVal}</span>` : streakVal;
         const l10 = statsDisplay['Last Ten Games'] ?? statsDisplay['lastTenGames'] ?? statsDisplay['l10'] ?? '-';
-        const playoffLine = idx === 6 ? ' class="playoffs-line"' : '';
+        const playoffLine = idx === 6 ? ' class="playoffs-line"' : idx === 10 ? ' class="playin-line"' : '';
         html += `<tr${playoffLine}>
           <td><span class="standings-rank">${idx+1}</span> <img class="standings-team-logo" src="${logoUrl}" alt="${abbr}" onerror="this.style.display='none'"><span class="standings-team-name">${displayName}</span></td>
           <td>${wins}</td>
