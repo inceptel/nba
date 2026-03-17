@@ -21,8 +21,11 @@
   body { background: var(--bg); color: var(--text); font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace; font-size: 13px; min-height: 100vh; }
 
   header { padding: 16px 20px 12px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: var(--bg); z-index: 10; }
-  .header-left { display: flex; align-items: baseline; gap: 12px; }
+  .header-left { display: flex; align-items: center; gap: 12px; }
   h1 { font-size: 15px; font-weight: 700; letter-spacing: 0.1em; color: var(--text); }
+  .date-nav { display: flex; align-items: center; gap: 6px; }
+  .nav-btn { background: none; border: 1px solid var(--border); color: var(--muted); font-size: 13px; width: 22px; height: 22px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 0; font-family: inherit; transition: border-color 0.2s, color 0.2s; }
+  .nav-btn:hover { border-color: var(--accent); color: var(--accent); }
   .date { color: var(--muted); font-size: 12px; }
   .refresh-info { color: var(--muted); font-size: 11px; display: flex; align-items: center; gap: 6px; }
   .live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); display: inline-block; animation: pulse 2s infinite; }
@@ -86,7 +89,11 @@
 <header>
   <div class="header-left">
     <h1>NBA</h1>
-    <span class="date" id="date-label"></span>
+    <div class="date-nav">
+      <button class="nav-btn" id="prev-btn" title="Previous day">&#8249;</button>
+      <span class="date" id="date-label"></span>
+      <button class="nav-btn" id="next-btn" title="Next day">&#8250;</button>
+    </div>
   </div>
   <div class="refresh-info">
     <span class="live-dot" id="live-dot" style="display:none"></span>
@@ -116,6 +123,7 @@ const TEAM_COLORS = {
 
 let refreshTimer, countdownTimer, secondsLeft = 30;
 let hasLiveGames = false;
+let dateOffset = 0; // 0=today, -1=yesterday, +1=tomorrow
 
 function pad(n) { return String(n).padStart(2, '0'); }
 
@@ -124,6 +132,22 @@ function formatTime(isoStr) {
   const h = d.getHours(), m = d.getMinutes();
   const ampm = h >= 12 ? 'PM' : 'AM';
   return `${h % 12 || 12}:${pad(m)} ${ampm}`;
+}
+
+function dateStrForOffset(offset) {
+  const d = new Date();
+  d.setDate(d.getDate() + offset);
+  return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}`;
+}
+
+function labelForOffset(offset) {
+  const d = new Date();
+  d.setDate(d.getDate() + offset);
+  const ds = d.toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric'});
+  if (offset === 0) return `Today · ${ds}`;
+  if (offset === -1) return `Yesterday · ${ds}`;
+  if (offset === 1) return `Tomorrow · ${ds}`;
+  return ds;
 }
 
 function teamInitials(name) {
@@ -275,22 +299,25 @@ async function load() {
   const label = document.getElementById('refresh-label');
   const liveDot = document.getElementById('live-dot');
   const dateLabel = document.getElementById('date-label');
+  const nextBtn = document.getElementById('next-btn');
+
+  // Don't allow navigating into the future beyond tomorrow
+  nextBtn.disabled = dateOffset >= 1;
+  nextBtn.style.opacity = dateOffset >= 1 ? '0.3' : '';
 
   try {
-    let data = await fetchGames(todayStr());
+    let data = await fetchGames(dateStrForOffset(dateOffset));
     let events = data.events || [];
-    let usingYesterday = false;
 
-    if (!events.length) {
-      data = await fetchGames(yesterdayStr());
+    // If today has no games and we're on today, auto-check yesterday
+    if (!events.length && dateOffset === 0) {
+      data = await fetchGames(dateStrForOffset(-1));
       events = data.events || [];
-      usingYesterday = true;
+      if (events.length) dateOffset = -1;
     }
 
     // Date label
-    const calDate = data.day?.date || data.leagues?.[0]?.calendar?.[0];
-    const displayDate = new Date().toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric'});
-    dateLabel.textContent = usingYesterday ? `Yesterday · ${displayDate}` : `Today · ${displayDate}`;
+    dateLabel.textContent = labelForOffset(dateOffset);
 
     hasLiveGames = events.some(e => e.status?.type?.state === 'in');
     liveDot.style.display = hasLiveGames ? 'inline-block' : 'none';
@@ -329,6 +356,19 @@ function startCountdown() {
     }
   }, 1000);
 }
+
+document.getElementById('prev-btn').addEventListener('click', () => {
+  dateOffset--;
+  clearInterval(countdownTimer);
+  load().then(startCountdown);
+});
+
+document.getElementById('next-btn').addEventListener('click', () => {
+  if (dateOffset >= 1) return;
+  dateOffset++;
+  clearInterval(countdownTimer);
+  load().then(startCountdown);
+});
 
 load().then(startCountdown);
 </script>
