@@ -89,7 +89,7 @@ Mark fixed issues with ~~strikethrough~~ rather than deleting them.
 - MEDIUM: No standings tab — would be very useful alongside scores
 - ~~MEDIUM: Team logos are text initials — try fetching ESPN team logo URLs~~
 - MEDIUM: Player leader stats missing from many games — check API response structure
-- LOW: No dark/light mode toggle
+- ~~LOW: No dark/light mode toggle~~
 - LOW: Mobile: game cards could be more compact
 - LOW: Add yesterday/tomorrow navigation arrows
 

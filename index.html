@@ -105,6 +105,19 @@
   .playoffs-line td { border-top: 2px solid var(--accent) !important; }
   .playin-line td { border-top: 1px dashed var(--muted) !important; }
 
+  body.light {
+    --bg: #f4f4f9;
+    --surface: #ffffff;
+    --surface2: #eaeaf2;
+    --border: #d5d5e5;
+    --text: #0a0a1e;
+    --muted: #8888a0;
+    --accent: #2266e0;
+    --green: #1a8a4a;
+    --red: #cc2222;
+    --gold: #b08000;
+  }
+
   @media (max-width: 400px) {
     .games { grid-template-columns: 1fr; padding: 8px; }
     .team-score { font-size: 18px; }
@@ -122,6 +135,7 @@
       <button class="nav-btn" id="next-btn" title="Next day">&#8250;</button>
     </div>
   </div>
+  <button class="nav-btn" id="theme-btn" title="Toggle light/dark mode" onclick="toggleTheme()" style="font-size:12px;width:26px;height:22px">☀</button>
   <div class="refresh-info">
     <span class="live-dot" id="live-dot" style="display:none"></span>
     <span id="refresh-label">loading...</span>
@@ -475,6 +489,17 @@ document.getElementById('next-btn').addEventListener('click', () => {
 });
 
 load().then(startCountdown);
+
+function toggleTheme() {
+  const isLight = document.body.classList.toggle('light');
+  localStorage.setItem('nba-theme', isLight ? 'light' : 'dark');
+  document.getElementById('theme-btn').textContent = isLight ? '☾' : '☀';
+}
+
+if (localStorage.getItem('nba-theme') === 'light') {
+  document.body.classList.add('light');
+  document.getElementById('theme-btn').textContent = '☾';
+}
 
 let standingsLoaded = false;
 
