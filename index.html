@@ -287,15 +287,20 @@ function renderGame(event) {
     const awayLines = renderLineScores(away, isLive);
     const homeLines = renderLineScores(home, isLive);
     if (awayLines || homeLines) {
+      const awayTotal = away.score ?? '';
+      const homeTotal = home.score ?? '';
+      const totalCol = (score) => score !== '' ? `<div class="qtr" style="margin-left:4px;padding-left:6px;border-left:1px solid var(--border)"><div class="qtr-label">T</div><div class="qtr-score">${score}</div></div>` : '';
       linescoresHtml = `
         <div style="padding: 6px 12px; border-bottom: 1px solid var(--border); display:flex; flex-direction:column; gap:4px;">
           <div style="display:flex; align-items:center; gap:6px;">
             <span style="width:28px;font-size:10px;color:var(--muted)">${awayAbbr}</span>
             <div class="line-scores">${awayLines}</div>
+            ${totalCol(awayTotal)}
           </div>
           <div style="display:flex; align-items:center; gap:6px;">
             <span style="width:28px;font-size:10px;color:var(--muted)">${homeAbbr}</span>
             <div class="line-scores">${homeLines}</div>
+            ${totalCol(homeTotal)}
           </div>
         </div>`;
     }
