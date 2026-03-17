@@ -58,7 +58,8 @@ LOOP FOREVER:
 
    **CURRENT FOCUS: general** — Fix bugs first, then UX improvements, then visual polish. Make every iteration count.
 
-2. **Check deadline**: `echo $(($(cat /home/user/autoweb-nba/deadline) - $(date +%s)))s left`
+2. **Check deadline**: `echo $(($(cat /home/user/autoweb-nba/deadline 2>/dev/null || echo 9999999999) - $(date +%s)))s left`
+   - If the deadline file is missing, continue normally (no hard stop).
 
 3. **Pick ONE improvement**. Priority order:
    - Bugs / broken things (CRITICAL/HIGH below)
@@ -72,6 +73,7 @@ LOOP FOREVER:
 
 6. **Run tests**: `cd /home/user/public/nba && bash tests/run-tests.sh`
    If tests fail → revert immediately.
+   If `tests/run-tests.sh` does not exist, skip this step and note it in your log.
 
 7. **Verify visually** with agent-browser screenshot.
 
@@ -79,8 +81,10 @@ LOOP FOREVER:
 
 ## Known issues (priority order)
 
+Mark fixed issues with ~~strikethrough~~ rather than deleting them.
+
+- HIGH: Scheduled games show tip-off time in away score column — layout is wrong (check `homeAway` field for scheduled game rendering, not just live/final)
 - HIGH: No loading state shown while API fetches — user sees blank content briefly
-- HIGH: Scheduled games show tip-off time in away score column — layout is wrong
 - MEDIUM: No standings tab — would be very useful alongside scores
 - MEDIUM: Team logos are text initials — try fetching ESPN team logo URLs
 - MEDIUM: Player leader stats missing from many games — check API response structure
@@ -114,3 +118,5 @@ This repo demonstrates the full autoweb feature set:
 - One change per iteration — resist the urge to fix multiple things
 - If the page goes blank, revert immediately before logging
 - ESPN API returns `competitors[0]` as either home or away — always check `homeAway` field
+- The `homeAway` field bug affects scheduled games differently than live/final — test all three states
+- Mark fixed issues with ~~strikethrough~~ in Known Issues — do not delete them
