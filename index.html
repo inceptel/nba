@@ -631,7 +631,7 @@ async function loadStandings() {
           return rec;
         };
         const l10 = colorRecord(l10Raw);
-        const diffRaw = stats['differential'] ?? stats['pointDifferential'] ?? stats['avgPointDifferential'] ?? stats['pointsFor'] !== undefined ? (parseFloat(stats['pointsFor'] || 0) - parseFloat(stats['pointsAgainst'] || 0)) : undefined;
+        const diffRaw = stats['differential'] ?? stats['pointDifferential'] ?? stats['avgPointDifferential'] ?? (stats['pointsFor'] !== undefined ? (parseFloat(stats['pointsFor'] || 0) - parseFloat(stats['pointsAgainst'] || 0)) : undefined);
         const diffVal = diffRaw !== undefined && diffRaw !== '-' ? parseFloat(diffRaw) : null;
         const diffDisplay = diffVal !== null && !isNaN(diffVal) ? (diffVal > 0 ? `+${diffVal.toFixed(1)}` : diffVal.toFixed(1)) : '-';
         const diffColor = diffVal > 0 ? 'var(--green)' : diffVal < 0 ? 'var(--red)' : '';
