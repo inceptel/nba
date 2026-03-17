@@ -95,15 +95,19 @@
   .tab:hover:not(.active) { color: var(--text); }
 
   .standings { padding: 12px; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; }
-  .standings-conf { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
-  .standings-conf-header { padding: 8px 12px; background: var(--surface2); border-bottom: 1px solid var(--border); font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: var(--accent); text-transform: uppercase; }
+  .standings-conf { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: visible; }
+  .standings-conf-header { padding: 8px 12px; background: var(--surface2); border-bottom: 1px solid var(--border); font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: var(--accent); text-transform: uppercase; border-radius: 8px 8px 0 0; }
   .standings-table { width: 100%; border-collapse: collapse; }
-  .standings-table th { padding: 5px 8px; font-size: 10px; color: var(--muted); font-weight: 600; text-align: right; border-bottom: 1px solid var(--border); }
+  .standings-table th { padding: 5px 8px; font-size: 10px; color: var(--muted); font-weight: 600; text-align: right; border-bottom: 1px solid var(--border); white-space: nowrap; }
   .standings-table th:first-child { text-align: left; padding-left: 12px; }
-  .standings-table td { padding: 5px 8px; font-size: 11px; text-align: right; border-bottom: 1px solid var(--border); }
+  .standings-table td { padding: 5px 8px; font-size: 11px; text-align: right; border-bottom: 1px solid var(--border); white-space: nowrap; }
   .standings-table td:first-child { text-align: left; padding-left: 12px; }
   .standings-table tr:last-child td { border-bottom: none; }
   .standings-table tr:hover td { background: var(--surface2); }
+  .standings-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .standings-table th:first-child { position: sticky; left: 0; background: var(--surface2); z-index: 2; }
+  .standings-table td:first-child { position: sticky; left: 0; background: var(--surface); z-index: 1; }
+  .standings-table tr:hover td:first-child { background: var(--surface2); }
   .standings-rank { color: var(--muted); font-size: 10px; min-width: 14px; display: inline-block; }
   .standings-team-logo { width: 18px; height: 18px; object-fit: contain; vertical-align: middle; margin-right: 5px; }
   .standings-team-name { vertical-align: middle; }
@@ -590,7 +594,7 @@ async function loadStandings() {
       if (!standings.length) continue;
       html += `<div class="standings-conf">
         <div class="standings-conf-header">${confName}</div>
-        <table class="standings-table">
+        <div class="standings-scroll"><table class="standings-table">
           <thead><tr>
             <th>Team</th><th>W</th><th>L</th><th>PCT</th><th>GB</th><th>DIFF</th><th>CONF</th><th>HOME</th><th>ROAD</th><th>L10</th><th>STRK</th>
           </tr></thead>
@@ -640,7 +644,7 @@ async function loadStandings() {
           <td>${streakDisplay}</td>
         </tr>`;
       });
-      html += '</tbody></table></div>';
+      html += '</tbody></table></div></div>';
     }
     html += '</div>';
     container.innerHTML = html;
