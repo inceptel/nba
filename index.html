@@ -124,9 +124,20 @@
     --gold: #b08000;
   }
 
-  @media (max-width: 400px) {
-    .games { grid-template-columns: 1fr; padding: 8px; }
-    .team-score { font-size: 18px; }
+  @media (max-width: 480px) {
+    .games { grid-template-columns: 1fr; padding: 8px; gap: 8px; }
+    .game-header { padding: 6px 10px; }
+    .teams { padding: 8px 10px; gap: 2px; }
+    .team-row { padding: 2px 0; }
+    .team-score { font-size: 20px; min-width: 36px; }
+    .team-logo { width: 24px; height: 24px; }
+    .team-logo-placeholder { width: 24px; height: 24px; }
+    .team-name { font-size: 12px; }
+    .game-footer { padding: 6px 10px; }
+    .leader { padding: 3px 5px; font-size: 9px; }
+    .standings { padding: 8px; gap: 8px; }
+    .standings-table td, .standings-table th { padding: 4px 5px; }
+    .standings-table td:first-child, .standings-table th:first-child { padding-left: 8px; }
   }
 </style>
 </head>
