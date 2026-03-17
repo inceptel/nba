@@ -26,6 +26,7 @@
   .date-nav { display: flex; align-items: center; gap: 6px; }
   .nav-btn { background: none; border: 1px solid var(--border); color: var(--muted); font-size: 13px; width: 22px; height: 22px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 0; font-family: inherit; transition: border-color 0.2s, color 0.2s; }
   .nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .today-btn { width: auto; padding: 0 7px; font-size: 10px; font-weight: 600; letter-spacing: 0.05em; }
   .date { color: var(--muted); font-size: 12px; }
   .refresh-info { color: var(--muted); font-size: 11px; display: flex; align-items: center; gap: 6px; }
   .live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); display: inline-block; animation: pulse 2s infinite; }
@@ -155,6 +156,7 @@
     <div class="date-nav" id="date-nav">
       <button class="nav-btn" id="prev-btn" title="Previous day">&#8249;</button>
       <span class="date" id="date-label"></span>
+      <button class="nav-btn today-btn" id="today-btn" title="Go to today" style="display:none" onclick="goToToday()">TODAY</button>
       <button class="nav-btn" id="next-btn" title="Next day">&#8250;</button>
     </div>
   </div>
@@ -460,6 +462,9 @@ async function load(showSpinner = false) {
   // Don't allow navigating into the future beyond tomorrow
   nextBtn.disabled = dateOffset >= 1;
   nextBtn.style.opacity = dateOffset >= 1 ? '0.3' : '';
+  // Show "Today" button only when not on today
+  const todayBtn = document.getElementById('today-btn');
+  todayBtn.style.display = dateOffset !== 0 ? '' : 'none';
 
   if (showSpinner) {
     container.innerHTML = '<div class="loading"><div class="spinner"></div><br>Loading scores...</div>';
@@ -536,6 +541,12 @@ function startCountdown() {
       load().then(startCountdown);
     }
   }, 1000);
+}
+
+function goToToday() {
+  dateOffset = 0;
+  clearInterval(countdownTimer);
+  load(true).then(startCountdown);
 }
 
 document.getElementById('prev-btn').addEventListener('click', () => {
