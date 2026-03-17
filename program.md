@@ -117,6 +117,7 @@ This repo demonstrates the full autoweb feature set:
 ## Rules learned from experience
 
 - Always verify with agent-browser — do not trust the code alone
+- The footer autoweb dashboard link must point to `https://allan.feather-cloud.dev/public/nba/autoweb-dashboard.html` — verify this is correct on every iteration and fix it if it's wrong
 - One change per iteration — resist the urge to fix multiple things
 - If the page goes blank, revert immediately before logging
 - ESPN API returns `competitors[0]` as either home or away — always check `homeAway` field
