@@ -589,7 +589,7 @@ async function loadStandings() {
         <div class="standings-conf-header">${confName}</div>
         <table class="standings-table">
           <thead><tr>
-            <th>Team</th><th>W</th><th>L</th><th>PCT</th><th>GB</th><th>CONF</th><th>HOME</th><th>ROAD</th><th>L10</th><th>STRK</th>
+            <th>Team</th><th>W</th><th>L</th><th>PCT</th><th>GB</th><th>DIFF</th><th>CONF</th><th>HOME</th><th>ROAD</th><th>L10</th><th>STRK</th>
           </tr></thead>
           <tbody>`;
       standings.forEach((entry, idx) => {
@@ -616,6 +616,11 @@ async function loadStandings() {
         const homeRecord = statsDisplay['Home'] ?? statsDisplay['homeRecord'] ?? statsDisplay['home'] ?? '-';
         const roadRecord = statsDisplay['Road'] ?? statsDisplay['roadRecord'] ?? statsDisplay['road'] ?? '-';
         const confRecord = statsDisplay['vsConference'] ?? statsDisplay['Conference'] ?? statsDisplay['conference'] ?? '-';
+        const diffRaw = stats['differential'] ?? stats['pointDifferential'] ?? stats['avgPointDifferential'] ?? stats['pointsFor'] !== undefined ? (parseFloat(stats['pointsFor'] || 0) - parseFloat(stats['pointsAgainst'] || 0)) : undefined;
+        const diffVal = diffRaw !== undefined && diffRaw !== '-' ? parseFloat(diffRaw) : null;
+        const diffDisplay = diffVal !== null && !isNaN(diffVal) ? (diffVal > 0 ? `+${diffVal.toFixed(1)}` : diffVal.toFixed(1)) : '-';
+        const diffColor = diffVal > 0 ? 'var(--green)' : diffVal < 0 ? 'var(--red)' : '';
+        const diffHtml = diffColor ? `<span style="color:${diffColor}">${diffDisplay}</span>` : diffDisplay;
         const teamColor = TEAM_COLORS[abbr]?.[0] || '#555';
         const playoffLine = idx === 6 ? ' class="playoffs-line"' : idx === 10 ? ' class="playin-line"' : '';
         html += `<tr${playoffLine}>
@@ -624,6 +629,7 @@ async function loadStandings() {
           <td>${losses}</td>
           <td class="standings-pct">${pctDisplay}</td>
           <td class="standings-gb">${gbDisplay}</td>
+          <td>${diffHtml}</td>
           <td class="standings-l10">${confRecord}</td>
           <td class="standings-l10">${homeRecord}</td>
           <td class="standings-l10">${roadRecord}</td>
