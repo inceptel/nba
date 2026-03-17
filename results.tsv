@@ -1,0 +1,7 @@
+timestamp	status	description
+2026-03-17T21:41:17Z	keep	Fix scheduled game layout: remove tip-off time from score column (was shown next to away team, blank next to home team) — time already shown in game header
+2026-03-17T21:43:07Z	keep	Add ESPN team logo images — replaced text initials with actual team logos using ESPN CDN URLs with text fallback on error
+2026-03-17T21:45:21Z	keep	Add yesterday/tomorrow date navigation arrows — users can browse previous/future game dates; next button disabled beyond +1 day; auto-fallback to yesterday if today has no games
+2026-03-17T21:47:55Z	keep	Add loading spinner on date navigation — clicking prev/next now shows spinner+loading state immediately for visual feedback, auto-refresh keeps existing content
+2026-03-17T21:49:27Z	keep	Fix usingYesterday undefined variable — empty state now shows correct day label (today/yesterday/tomorrow) based on dateOffset
+2026-03-17T21:53:34Z	keep	Add Standings tab — shows Eastern/Western conference tables with W, L, PCT, GB, streak and playoff line separator; lazy-loads from ESPN v2 standings API

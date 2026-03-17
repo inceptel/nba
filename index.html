@@ -57,6 +57,9 @@
   .team-row.winner .team-score { color: var(--text); }
   .team-row.loser .team-score { color: var(--muted); }
   .no-score { font-size: 13px; color: var(--muted); min-width: 40px; text-align: right; }
+  .game-vs { display: flex; align-items: center; justify-content: center; padding: 2px 12px; color: var(--muted); font-size: 10px; letter-spacing: 0.08em; gap: 8px; }
+  .game-vs::before, .game-vs::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .home-badge { font-size: 9px; color: var(--muted); border: 1px solid var(--border); border-radius: 3px; padding: 1px 4px; margin-left: 5px; vertical-align: middle; letter-spacing: 0.05em; }
 
   .game-footer { padding: 8px 12px; border-top: 1px solid var(--border); }
   .leaders { display: flex; gap: 8px; flex-wrap: wrap; }
@@ -300,10 +303,11 @@ function renderGame(event) {
       </div>
       ${isScheduled ? '' : `<div class="team-score ${awayWin ? '' : isFinal ? '' : ''}">${away.score ?? '-'}</div>`}
     </div>
+    ${isScheduled ? '<div class="game-vs">vs</div>' : ''}
     <div class="team-row ${homeWin ? 'winner' : isFinal ? 'loser' : ''}">
       <img class="team-logo" src="${homeLogoUrl}" alt="${homeAbbr}" onerror="this.outerHTML='<div class=\\'team-logo-placeholder\\' style=\\'background:${homeColor}20;color:${homeColor}\\'>${homeAbbr}</div>'">
       <div class="team-info">
-        <div class="team-name">${home.team.displayName}</div>
+        <div class="team-name">${home.team.displayName}${isScheduled ? '<span class="home-badge">HOME</span>' : ''}</div>
         <div class="team-record">${home.records?.[0]?.summary || ''}</div>
       </div>
       ${isScheduled ? '' : `<div class="team-score">${home.score ?? '-'}</div>`}
