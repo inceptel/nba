@@ -328,7 +328,8 @@ async function load(showSpinner = false) {
     liveDot.style.display = hasLiveGames ? 'inline-block' : 'none';
 
     if (!events.length) {
-      container.innerHTML = `<div class="empty"><h2>No games${usingYesterday ? ' recently' : ' today'}</h2><p style="margin-top:8px;font-size:11px">Check back later</p></div>`;
+      const dayLabel = dateOffset === 0 ? 'today' : dateOffset === -1 ? 'yesterday' : dateOffset === 1 ? 'tomorrow' : 'that day';
+      container.innerHTML = `<div class="empty"><h2>No games ${dayLabel}</h2><p style="margin-top:8px;font-size:11px">Check back later</p></div>`;
       return;
     }
 
