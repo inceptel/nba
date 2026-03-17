@@ -294,7 +294,7 @@ function yesterdayStr() {
   return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}`;
 }
 
-async function load() {
+async function load(showSpinner = false) {
   const container = document.getElementById('games-container');
   const label = document.getElementById('refresh-label');
   const liveDot = document.getElementById('live-dot');
@@ -304,6 +304,11 @@ async function load() {
   // Don't allow navigating into the future beyond tomorrow
   nextBtn.disabled = dateOffset >= 1;
   nextBtn.style.opacity = dateOffset >= 1 ? '0.3' : '';
+
+  if (showSpinner) {
+    container.innerHTML = '<div class="loading"><div class="spinner"></div><br>Loading scores...</div>';
+    label.textContent = 'loading...';
+  }
 
   try {
     let data = await fetchGames(dateStrForOffset(dateOffset));
@@ -360,14 +365,14 @@ function startCountdown() {
 document.getElementById('prev-btn').addEventListener('click', () => {
   dateOffset--;
   clearInterval(countdownTimer);
-  load().then(startCountdown);
+  load(true).then(startCountdown);
 });
 
 document.getElementById('next-btn').addEventListener('click', () => {
   if (dateOffset >= 1) return;
   dateOffset++;
   clearInterval(countdownTimer);
-  load().then(startCountdown);
+  load(true).then(startCountdown);
 });
 
 load().then(startCountdown);

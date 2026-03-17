@@ -84,7 +84,8 @@ LOOP FOREVER:
 Mark fixed issues with ~~strikethrough~~ rather than deleting them.
 
 - HIGH: Scheduled games show tip-off time in away score column — layout is wrong (check `homeAway` field for scheduled game rendering, not just live/final)
-- HIGH: No loading state shown while API fetches — user sees blank content briefly
+- ~~HIGH: No loading state shown while API fetches — user sees blank content briefly~~ (initial load had spinner; date nav now also shows spinner)
+- LOW: `usingYesterday` variable undefined in empty-state message (shows "today" instead of "recently" when auto-fallback to yesterday occurred)
 - MEDIUM: No standings tab — would be very useful alongside scores
 - ~~MEDIUM: Team logos are text initials — try fetching ESPN team logo URLs~~
 - MEDIUM: Player leader stats missing from many games — check API response structure
