@@ -225,7 +225,7 @@ function renderLineScores(competitor, isLive) {
   if (!linescores.length) return '';
   const lastIdx = linescores.length - 1;
   return linescores.map((ls, i) => {
-    const label = i < 4 ? `Q${i+1}` : `OT${i-3}`;
+    const label = i < 4 ? `Q${i+1}` : i === 4 ? 'OT' : `${i-3}OT`;
     const isCurrent = isLive && i === lastIdx;
     return `<div class="qtr"><div class="qtr-label">${label}</div><div class="qtr-score${isCurrent ? ' current' : ''}">${ls.value ?? '-'}</div></div>`;
   }).join('');
