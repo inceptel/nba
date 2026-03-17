@@ -235,7 +235,6 @@ function renderGame(event) {
         <div class="team-record">${away.records?.[0]?.summary || ''}</div>
       </div>
       ${isScheduled ? '' : `<div class="team-score ${awayWin ? '' : isFinal ? '' : ''}">${away.score ?? '-'}</div>`}
-      ${isScheduled ? `<div class="no-score">${startTime}</div>` : ''}
     </div>
     <div class="team-row ${homeWin ? 'winner' : isFinal ? 'loser' : ''}">
       <div class="team-logo-placeholder" style="background:${homeColor}20;color:${homeColor}">${homeAbbr}</div>
@@ -244,7 +243,6 @@ function renderGame(event) {
         <div class="team-record">${home.records?.[0]?.summary || ''}</div>
       </div>
       ${isScheduled ? '' : `<div class="team-score">${home.score ?? '-'}</div>`}
-      ${isScheduled ? `<div class="no-score">&nbsp;</div>` : ''}
     </div>
   </div>
   ${linescoresHtml}
