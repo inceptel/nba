@@ -471,7 +471,9 @@ async function loadStandings() {
         const gb = stats['gamesBehind'] ?? stats['gamesback'] ?? '-';
         const gbDisplay = gb === 0 || gb === '0' ? '-' : gb;
         const streakRaw = stats['streak'];
-        const streakDisplay = streakRaw !== undefined && streakRaw !== '' ? (streakRaw > 0 ? `W${Math.abs(streakRaw)}` : `L${Math.abs(streakRaw)}`) : '-';
+        const streakVal = streakRaw !== undefined && streakRaw !== '' ? (streakRaw > 0 ? `W${Math.abs(streakRaw)}` : `L${Math.abs(streakRaw)}`) : '-';
+        const streakColor = streakRaw > 0 ? 'var(--green)' : streakRaw < 0 ? 'var(--red)' : '';
+        const streakDisplay = streakColor ? `<span style="color:${streakColor};font-weight:600">${streakVal}</span>` : streakVal;
         const l10 = statsDisplay['Last Ten Games'] ?? statsDisplay['lastTenGames'] ?? statsDisplay['l10'] ?? '-';
         const playoffLine = idx === 6 ? ' class="playoffs-line"' : '';
         html += `<tr${playoffLine}>
