@@ -347,6 +347,23 @@ function renderGame(event) {
 </div>`;
 }
 
+function updatePageTitle(events) {
+  const liveGames = events.filter(e => e.status?.type?.state === 'in');
+  if (!liveGames.length) {
+    document.title = 'NBA Scores';
+    return;
+  }
+  const summaries = liveGames.slice(0, 3).map(e => {
+    const comp = e.competitions?.[0];
+    if (!comp) return '';
+    const [away, home] = comp.competitors[0]?.homeAway === 'home'
+      ? [comp.competitors[1], comp.competitors[0]]
+      : [comp.competitors[0], comp.competitors[1]];
+    return `${away.team.abbreviation} ${away.score} ${home.team.abbreviation} ${home.score}`;
+  }).filter(Boolean);
+  document.title = `NBA · ${summaries.join(' · ')} · Live`;
+}
+
 async function fetchGames(dateStr) {
   const url = `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard${dateStr ? `?dates=${dateStr}` : ''}`;
   const r = await fetch(url);
@@ -413,6 +430,7 @@ async function load(showSpinner = false) {
 
     container.innerHTML = `<div class="games">${events.map(renderGame).join('')}</div>`;
     label.textContent = `updated ${new Date().toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'})}`;
+    updatePageTitle(events);
 
   } catch (e) {
     container.innerHTML = `<div class="error">Failed to load scores: ${e.message}<br><br><small>Will retry in 30s</small></div>`;
