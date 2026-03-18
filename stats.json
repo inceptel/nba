@@ -1,18 +1,23 @@
 {
-  "updated": "2026-03-18T00:34:20.206686+00:00",
+  "updated": "2026-03-18T00:39:00.067583+00:00",
   "instances": [
     {
       "name": "nba",
       "url": "https://allan.feather-cloud.dev/public/nba/",
       "running": true,
-      "keeps": 57,
+      "keeps": 58,
       "reverts": 0,
       "crashes": 0,
-      "last_keep": "Color-code team W-L records on game cards \u2014 winning records shown in green, losing records in red, m",
-      "last_time": "2026-03-18T00:32:26Z"
+      "last_keep": "Add keyboard arrow-key navigation for date browsing \u2014 left/right arrow keys cycle through prev/next ",
+      "last_time": "2026-03-18T00:34:42Z"
     }
   ],
   "recent": [
+    {
+      "time": "2026-03-18T00:34:42Z",
+      "instance": "nba",
+      "desc": "Add keyboard arrow-key navigation for date browsing \u2014 left/right arrow keys cycle through prev/next "
+    },
     {
       "time": "2026-03-18T00:32:26Z",
       "instance": "nba",
@@ -57,11 +62,6 @@
       "time": "2026-03-18T00:04:29Z",
       "instance": "nba",
       "desc": "Add manual refresh button (\u21ba) to scores header \u2014 lets users refresh immediately without waiting for "
-    },
-    {
-      "time": "2026-03-18T00:01:30Z",
-      "instance": "nba",
-      "desc": "Fix footer autoweb dashboard link \u2014 was pointing to /public/autoweb-dashboard/ instead of /public/nb"
     }
   ]
 }

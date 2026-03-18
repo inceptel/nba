@@ -758,7 +758,10 @@ async function loadStandings() {
         const wins = stats['wins'] ?? stats['overall.wins'] ?? '-';
         const losses = stats['losses'] ?? stats['overall.losses'] ?? '-';
         const pct = stats['winPercent'] ?? stats['winpercent'] ?? '';
-        const pctDisplay = pct !== '' && pct !== '-' ? parseFloat(pct).toFixed(3).replace(/^0/, '') : '-';
+        const pctNum = pct !== '' && pct !== '-' ? parseFloat(pct) : null;
+        const pctDisplay = pctNum !== null ? pctNum.toFixed(3).replace(/^0/, '') : '-';
+        const pctColor = pctNum !== null ? (pctNum > 0.5 ? 'var(--green)' : pctNum < 0.5 ? 'var(--red)' : '') : '';
+        const pctHtml = pctColor ? `<span style="color:${pctColor};font-weight:600">${pctDisplay}</span>` : pctDisplay;
         const gb = stats['gamesBehind'] ?? stats['gamesback'] ?? '-';
         const gbDisplay = gb === 0 || gb === '0' ? '-' : gb;
         const streakRaw = stats['streak'];
@@ -792,7 +795,7 @@ async function loadStandings() {
           <td data-val="${idx+1}" style="border-left:3px solid ${teamColor}99"><span class="standings-rank" style="color:${seedColor}">${idx+1}</span> <img class="standings-team-logo" src="${logoUrl}" alt="${abbr}" onerror="this.style.display='none'"><span class="standings-team-name">${displayName}</span></td>
           <td data-val="${wins !== '-' ? wins : 0}">${wins}</td>
           <td data-val="${losses !== '-' ? losses : 0}">${losses}</td>
-          <td data-val="${pct !== '' && pct !== '-' ? parseFloat(pct)*1000 : 0}" class="standings-pct">${pctDisplay}</td>
+          <td data-val="${pctNum !== null ? pctNum*1000 : 0}" class="standings-pct">${pctHtml}</td>
           <td data-val="${gbNum}" class="standings-gb">${gbDisplay}</td>
           <td data-val="${diffVal !== null && !isNaN(diffVal) ? diffVal : -999}">${diffHtml}</td>
           <td data-val="${recordSortVal(confRecord)}" class="standings-l10">${colorRecord(confRecord)}</td>

@@ -91,6 +91,7 @@ h1 { font-size: 22px; font-weight: 700; color: #fff; letter-spacing: -0.5px; }
 .spark-dot.empty  { background: var(--bg3); }
 .streak-label { font-size: 10px; color: var(--muted); white-space: nowrap; }
 .streak-val { color: #4ade80; font-weight: 700; }
+.iter-badge { font-size: 10px; color: var(--muted); background: var(--bg3); border: 1px solid var(--border); padding: 1px 6px; border-radius: 99px; margin-left: 6px; }
 .last-keep {
   font-size: 11px; color: var(--muted); line-height: 1.5;
   border-top: 1px solid var(--border); padding-top: 10px;
@@ -181,11 +182,28 @@ function avgIterTime(instName, recent) {
   return Math.round(avgSec / 60) + 'm/iter';
 }
 
+function nextRunLabel(instName, recent) {
+  const entries = (recent || []).filter(r => r.instance === instName);
+  if (entries.length < 2 || !entries[0] || !entries[0].time) return null;
+  let totalDiff = 0, count = 0;
+  for (let i = 0; i < entries.length - 1; i++) {
+    const diff = new Date(entries[i].time) - new Date(entries[i + 1].time);
+    if (diff > 0) { totalDiff += diff; count++; }
+  }
+  if (count === 0) return null;
+  const avgMs = totalDiff / count;
+  const nextTime = new Date(new Date(entries[0].time).getTime() + avgMs);
+  const remSec = Math.round((nextTime - Date.now()) / 1000);
+  if (remSec <= 0) return 'next ~now';
+  if (remSec < 60) return `next ~${remSec}s`;
+  return `next ~${Math.round(remSec / 60)}m`;
+}
+
 function renderCard(inst, recent) {
   return `
     <div class="card" data-instance="${inst.name}">
       <div class="card-header">
-        <span class="card-name">${inst.name}</span>
+        <span class="card-name">${inst.name}<span class="iter-badge">${inst.keeps + inst.reverts + inst.crashes} iters</span></span>
         ${inst.reverts === 0 && inst.crashes === 0 && inst.keeps > 0 ? '<span class="status-pill flawless">flawless</span>' : ''}
         <span class="status-pill ${inst.running ? 'running' : 'stopped'}">${inst.running ? 'running' : 'stopped'}</span>
       </div>
@@ -197,7 +215,8 @@ function renderCard(inst, recent) {
       ${(function() {
           const total = inst.keeps + inst.reverts;
           const iter = avgIterTime(inst.name, recent);
-          const rateStr = iter ? `<span class="run-rate">~${iter}</span>` : '';
+          const nextLbl = inst.running ? nextRunLabel(inst.name, recent) : null;
+          const rateStr = iter ? `<span class="run-rate">~${iter}${nextLbl ? ` · ${nextLbl}` : ''}</span>` : '';
           if (total === 0) return `<div class="keep-rate"><span style="color:#475569">no data</span>${rateStr}</div><div class="keep-rate-bar"><div class="keep-rate-fill" style="width:0%"></div></div>`;
           const pct = Math.round(inst.keeps / total * 100);
           const color = pct >= 90 ? '#4ade80' : pct >= 70 ? '#fbbf24' : '#f87171';
