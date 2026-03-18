@@ -97,7 +97,7 @@ Mark fixed issues with ~~strikethrough~~ rather than deleting them.
 ### Potential next features (no known bugs remain)
 
 - ~~Leaders tab polish: headshots, medal ranks, team logos, relative stat bars~~ (fully done)
-- **MEDIUM (TOP PRIORITY): Box score / team stats for final/live games** — FG%, rebounds, turnovers, assists per team; use ESPN gamecast/summary API endpoint
+- **MEDIUM (TOP PRIORITY): Box score / team stats for final/live games** — FG%, rebounds, turnovers, assists per team; use ESPN gamecast/summary API: `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event={gameId}` (gameId = `event.id` from scoreboard). Key fields: `boxscore.teams[].statistics[]` for team totals (FG%, rebounds, turnovers, assists). IMPORTANT: fetch lazily on expand/click — do NOT fetch all games at page load (10+ parallel requests will be slow)
 - MEDIUM: Injury report — show key player injuries on game cards (ESPN injury API exists)
 - LOW: Head-to-head season record shown on game cards
 - LOW: Team schedule popup — click team logo/name to see upcoming games
@@ -137,3 +137,4 @@ This repo demonstrates the full autoweb feature set:
 - **Leaders API**: `site.api.espn.com/apis/site/v2/sports/basketball/nba/leaders` is 404 (broken). Use `sports.core.api.espn.com/v2/sports/basketball/leagues/nba/seasons/{year}/types/2/leaders` instead. Note: this API uses `$ref` links for athletes; batch-fetch athlete names with `Promise.all`.
 - **Regression risk**: the dashboard now has 15+ features — when verifying a new iteration, check that the Standings tab, Leaders tab, and date navigation still work, not just the feature you changed
 - **Leaders tab complexity**: Leaders tab uses a hardcoded ESPN team ID → abbreviation map and batch-fetches `$ref` athlete links. If adding features to Leaders tab, validate that all 8 stat categories still render correctly after your change
+- **Box score API**: `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event={gameId}` — returns full game summary. `boxscore.teams[].statistics[]` has team totals (FG%, REB, TOV, AST, etc.). `boxscore.players[].statistics[]` has individual player lines. Fetch on-demand (not at page load) to avoid 10+ simultaneous requests.
