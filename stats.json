@@ -1,18 +1,23 @@
 {
-  "updated": "2026-03-18T00:53:10.963142+00:00",
+  "updated": "2026-03-18T00:57:22.226931+00:00",
   "instances": [
     {
       "name": "nba",
       "url": "https://allan.feather-cloud.dev/public/nba/",
       "running": true,
-      "keeps": 61,
+      "keeps": 62,
       "reverts": 0,
       "crashes": 0,
-      "last_keep": "Add medal colors to leaders tab ranks \u2014 gold/silver/bronze for top 3 ranks in each stat category, bo",
-      "last_time": "2026-03-18T00:44:02Z"
+      "last_keep": "Fix Leaders tab broken API \u2014 migrated from site.api.espn.com/leaders (404) to sports.core.api.espn.c",
+      "last_time": "2026-03-18T00:53:33Z"
     }
   ],
   "recent": [
+    {
+      "time": "2026-03-18T00:53:33Z",
+      "instance": "nba",
+      "desc": "Fix Leaders tab broken API \u2014 migrated from site.api.espn.com/leaders (404) to sports.core.api.espn.c"
+    },
     {
       "time": "2026-03-18T00:44:02Z",
       "instance": "nba",
@@ -57,11 +62,6 @@
       "time": "2026-03-18T00:20:43Z",
       "instance": "nba",
       "desc": "Add sortable columns to standings table \u2014 clicking any column header (W, L, PCT, GB, DIFF, CONF, HOM"
-    },
-    {
-      "time": "2026-03-18T00:17:11Z",
-      "instance": "nba",
-      "desc": "Add score deficit indicator to live game cards \u2014 trailing team's score shows small muted '-X' suffix"
     }
   ]
 }

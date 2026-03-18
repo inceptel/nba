@@ -716,6 +716,20 @@ function sortTable(th) {
   const tbody = table.querySelector('tbody');
   const idx = th.cellIndex;
   const currently = th.dataset.sortDir;
+  // 3-state cycle: none → desc → asc → none (reset)
+  if (currently === 'asc') {
+    // Reset to original standings order
+    table.querySelectorAll('th').forEach(h => { delete h.dataset.sortDir; h.classList.remove('sorted'); h.textContent = h.textContent.replace(/ [▼▲]$/, ''); });
+    const rows = Array.from(tbody.rows);
+    rows.sort((a, b) => parseInt(a.dataset.origIdx ?? 99) - parseInt(b.dataset.origIdx ?? 99));
+    rows.forEach((r, i) => {
+      r.classList.remove('playoffs-line', 'playin-line');
+      if (i === 6) r.classList.add('playoffs-line');
+      if (i === 10) r.classList.add('playin-line');
+      tbody.appendChild(r);
+    });
+    return;
+  }
   const newDir = currently === 'desc' ? 'asc' : 'desc';
   // Clear all sort indicators
   table.querySelectorAll('th').forEach(h => { delete h.dataset.sortDir; h.classList.remove('sorted'); h.textContent = h.textContent.replace(/ [▼▲]$/, ''); });
@@ -916,7 +930,7 @@ async function loadStandings() {
         const playoffLine = idx === 6 ? ' class="playoffs-line"' : idx === 10 ? ' class="playin-line"' : '';
         const seedColor = idx < 6 ? 'var(--gold)' : idx < 10 ? 'var(--accent)' : 'var(--muted)';
         const gbNum = (gb !== '-' && gb !== 0 && gb !== '0') ? parseFloat(gb) || 0 : 0;
-        html += `<tr${playoffLine}>
+        html += `<tr${playoffLine} data-orig-idx="${idx}">
           <td data-val="${idx+1}" style="border-left:3px solid ${teamColor}99"><span class="standings-rank" style="color:${seedColor}">${idx+1}</span> <img class="standings-team-logo" src="${logoUrl}" alt="${abbr}" onerror="this.style.display='none'"><span class="standings-team-name">${displayName}</span></td>
           <td data-val="${wins !== '-' ? wins : 0}">${wins}</td>
           <td data-val="${losses !== '-' ? losses : 0}">${losses}</td>
