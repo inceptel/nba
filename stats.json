@@ -1,18 +1,23 @@
 {
-  "updated": "2026-03-18T00:00:25.690694+00:00",
+  "updated": "2026-03-18T00:04:24.817138+00:00",
   "instances": [
     {
       "name": "nba",
       "url": "https://allan.feather-cloud.dev/public/nba/",
       "running": true,
-      "keeps": 47,
+      "keeps": 48,
       "reverts": 0,
       "crashes": 0,
-      "last_keep": "Add player headshots to leader badges \u2014 tiny circular photos appear next to player names using ESPN ",
-      "last_time": "2026-03-17T23:59:02Z"
+      "last_keep": "Fix footer autoweb dashboard link \u2014 was pointing to /public/autoweb-dashboard/ instead of /public/nb",
+      "last_time": "2026-03-18T00:01:30Z"
     }
   ],
   "recent": [
+    {
+      "time": "2026-03-18T00:01:30Z",
+      "instance": "nba",
+      "desc": "Fix footer autoweb dashboard link \u2014 was pointing to /public/autoweb-dashboard/ instead of /public/nb"
+    },
     {
       "time": "2026-03-17T23:59:02Z",
       "instance": "nba",
@@ -57,11 +62,6 @@
       "time": "2026-03-17T23:30:54Z",
       "instance": "nba",
       "desc": "Make standings table horizontally scrollable with sticky team column \u2014 added overflow-x:auto scroll "
-    },
-    {
-      "time": "2026-03-17T23:23:56Z",
-      "instance": "nba",
-      "desc": "Add CLOSE badge to live games within 5 points \u2014 pulsing gold badge in game header gives at-a-glance "
     }
   ]
 }
