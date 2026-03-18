@@ -1,18 +1,23 @@
 {
-  "updated": "2026-03-18T00:10:11.224581+00:00",
+  "updated": "2026-03-18T00:13:31.261615+00:00",
   "instances": [
     {
       "name": "nba",
       "url": "https://allan.feather-cloud.dev/public/nba/",
       "running": true,
-      "keeps": 50,
+      "keeps": 51,
       "reverts": 0,
       "crashes": 0,
-      "last_keep": "Show winner abbreviation in final game status \u2014 'FINAL \u00b7 BOS +5' instead of 'FINAL \u00b7 +5', making it ",
-      "last_time": "2026-03-18T00:07:52Z"
+      "last_keep": "Add game progress bar to live game cards \u2014 thin 2px green bar below game header shows 0f 48-min regu",
+      "last_time": "2026-03-18T00:12:53Z"
     }
   ],
   "recent": [
+    {
+      "time": "2026-03-18T00:12:53Z",
+      "instance": "nba",
+      "desc": "Add game progress bar to live game cards \u2014 thin 2px green bar below game header shows 0f 48-min regu"
+    },
     {
       "time": "2026-03-18T00:07:52Z",
       "instance": "nba",
@@ -57,11 +62,6 @@
       "time": "2026-03-17T23:40:06Z",
       "instance": "nba",
       "desc": "Color-code W-L records in standings (L10/HOME/ROAD/CONF) \u2014 green for winning records, red for losing"
-    },
-    {
-      "time": "2026-03-17T23:36:27Z",
-      "instance": "nba",
-      "desc": "Add local timezone abbreviation to game times \u2014 scheduled games now show e.g. '7:00 PM PST' instead "
     }
   ]
 }

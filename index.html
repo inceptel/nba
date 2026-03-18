@@ -327,6 +327,7 @@ function renderGame(event) {
   const homeWin = isFinal && homeScore > awayScore;
   const awayLeading = isLive && awayScore > homeScore;
   const homeLeading = isLive && homeScore > awayScore;
+  const liveScoreDiff = isLive && awayScore !== homeScore ? Math.abs(awayScore - homeScore) : 0;
 
   const isCloseGame = isLive && Math.abs(awayScore - homeScore) <= 5;
 
@@ -425,7 +426,7 @@ function renderGame(event) {
         <div class="team-name">${away.team.displayName}</div>
         <div class="team-record">${getRecord(away, 'road')}${away.records?.find(r=>r.name==='road'||r.type==='road') ? '<span style="color:var(--muted);font-size:9px;margin-left:3px">ROAD</span>' : ''}</div>
       </div>
-      ${isScheduled ? '' : `<div class="team-score ${awayWin ? '' : isFinal ? '' : ''}">${away.score ?? '-'}</div>`}
+      ${isScheduled ? '' : `<div class="team-score">${away.score ?? '-'}${(isLive && homeLeading && liveScoreDiff > 0) ? `<span style="font-size:10px;color:var(--muted);font-weight:400;margin-left:3px">-${liveScoreDiff}</span>` : ''}</div>`}
     </div>
     ${isScheduled ? '<div class="game-vs">vs</div>' : ''}
     <div class="team-row ${homeWin || homeLeading ? 'winner' : (isFinal || awayLeading) ? 'loser' : ''}">
@@ -434,7 +435,7 @@ function renderGame(event) {
         <div class="team-name">${home.team.displayName}${isScheduled ? '<span class="home-badge">HOME</span>' : ''}</div>
         <div class="team-record">${getRecord(home, 'home')}${home.records?.find(r=>r.name==='home'||r.type==='home') ? '<span style="color:var(--muted);font-size:9px;margin-left:3px">HOME</span>' : ''}</div>
       </div>
-      ${isScheduled ? '' : `<div class="team-score">${home.score ?? '-'}</div>`}
+      ${isScheduled ? '' : `<div class="team-score">${home.score ?? '-'}${(isLive && awayLeading && liveScoreDiff > 0) ? `<span style="font-size:10px;color:var(--muted);font-weight:400;margin-left:3px">-${liveScoreDiff}</span>` : ''}</div>`}
     </div>
   </div>
   ${linescoresHtml}

@@ -111,7 +111,7 @@ h1 { font-size: 22px; font-weight: 700; color: #fff; letter-spacing: -0.5px; }
 .act-inst.trading   { color: var(--trading); }
 .act-inst.nba       { color: var(--nba); }
 .act-inst.dashboard { color: var(--dashboard); }
-.act-desc { color: #cbd5e1; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.act-desc { color: #cbd5e1; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .act-status { font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 99px; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
 .act-status.keep   { background: #14532d; color: #4ade80; }
 .act-status.revert { background: #3b1515; color: #f87171; }
@@ -191,7 +191,7 @@ function renderCard(inst, recent) {
           }
           return `<div class="sparkline">${dots.join('')}</div>`;
         })()}
-      <div class="last-keep">
+      <div class="last-keep" title="${inst.last_keep || ''}">
         ${inst.last_time ? `<span class="ts">${relTime(inst.last_time)}</span>` : ''}
         ${inst.last_keep || '<em style="color:#475569">no keeps yet</em>'}
       </div>
@@ -207,7 +207,7 @@ function renderActivity(recent) {
       <span class="act-time">${relTime(r.time)}</span>
       <span class="act-inst ${r.instance}">${r.instance}</span>
       <span class="act-status ${r.status || 'keep'}">${r.status || 'keep'}</span>
-      <span class="act-desc">${r.desc}</span>
+      <span class="act-desc" title="${r.desc}">${r.desc}</span>
     </div>`).join('');
 }
 
