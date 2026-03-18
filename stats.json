@@ -1,18 +1,23 @@
 {
-  "updated": "2026-03-18T00:21:35.882396+00:00",
+  "updated": "2026-03-18T00:24:30.210178+00:00",
   "instances": [
     {
       "name": "nba",
       "url": "https://allan.feather-cloud.dev/public/nba/",
       "running": true,
-      "keeps": 53,
+      "keeps": 54,
       "reverts": 0,
       "crashes": 0,
-      "last_keep": "Add sortable columns to standings table \u2014 clicking any column header (W, L, PCT, GB, DIFF, CONF, HOM",
-      "last_time": "2026-03-18T00:20:43Z"
+      "last_keep": "Add team filter search box to scores tab \u2014 magnifying glass input above game cards filters visible g",
+      "last_time": "2026-03-18T00:23:54Z"
     }
   ],
   "recent": [
+    {
+      "time": "2026-03-18T00:23:54Z",
+      "instance": "nba",
+      "desc": "Add team filter search box to scores tab \u2014 magnifying glass input above game cards filters visible g"
+    },
     {
       "time": "2026-03-18T00:20:43Z",
       "instance": "nba",
@@ -57,11 +62,6 @@
       "time": "2026-03-17T23:48:18Z",
       "instance": "nba",
       "desc": "Add TODAY shortcut button to date navigation \u2014 button appears between date label and next arrow when"
-    },
-    {
-      "time": "2026-03-17T23:45:14Z",
-      "instance": "nba",
-      "desc": "Fix DIFF column operator precedence bug in standings \u2014 was always computing pointsFor-pointsAgainst "
     }
   ]
 }
