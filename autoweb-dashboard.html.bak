@@ -98,7 +98,11 @@ h1 { font-size: 22px; font-weight: 700; color: #fff; letter-spacing: -0.5px; }
 
 .section-title { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
 .activity { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
-.activity-row { display: flex; align-items: baseline; gap: 10px; padding: 8px 14px; border-bottom: 1px solid var(--border); font-size: 12px; }
+.activity-row { display: flex; align-items: baseline; gap: 10px; padding: 8px 14px 8px 11px; border-bottom: 1px solid var(--border); font-size: 12px; border-left: 3px solid var(--border); }
+.activity-row[data-instance="feather"]   { border-left-color: var(--feather); }
+.activity-row[data-instance="trading"]   { border-left-color: var(--trading); }
+.activity-row[data-instance="nba"]       { border-left-color: var(--nba); }
+.activity-row[data-instance="dashboard"] { border-left-color: var(--dashboard); }
 .activity-row:last-child { border-bottom: none; }
 .activity-row:hover { background: var(--bg3); }
 .act-time { color: var(--muted); font-size: 11px; white-space: nowrap; min-width: 62px; }
@@ -199,7 +203,7 @@ function renderActivity(recent) {
   if (!recent || !recent.length)
     return '<div class="activity-row"><span class="act-desc" style="color:#475569">no activity yet</span></div>';
   return recent.map(r => `
-    <div class="activity-row">
+    <div class="activity-row" data-instance="${r.instance}">
       <span class="act-time">${relTime(r.time)}</span>
       <span class="act-inst ${r.instance}">${r.instance}</span>
       <span class="act-status ${r.status || 'keep'}">${r.status || 'keep'}</span>

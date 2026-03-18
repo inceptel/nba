@@ -348,7 +348,8 @@ function renderGame(event) {
   }
   if (isFinal && (awayScore || homeScore)) {
     const margin = Math.abs(awayScore - homeScore);
-    statusText = `${statusDesc} · +${margin}`;
+    const winnerAbbr = awayScore > homeScore ? awayAbbr : homeAbbr;
+    statusText = `${statusDesc} · ${winnerAbbr} +${margin}`;
   }
 
   const broadcast = comp.broadcasts?.[0]?.names?.[0] || '';
