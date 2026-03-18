@@ -1,18 +1,23 @@
 {
-  "updated": "2026-03-18T00:04:34.851005+00:00",
+  "updated": "2026-03-18T00:10:11.224581+00:00",
   "instances": [
     {
       "name": "nba",
       "url": "https://allan.feather-cloud.dev/public/nba/",
       "running": true,
-      "keeps": 49,
+      "keeps": 50,
       "reverts": 0,
       "crashes": 0,
-      "last_keep": "Add manual refresh button (\u21ba) to scores header \u2014 lets users refresh immediately without waiting for ",
-      "last_time": "2026-03-18T00:04:29Z"
+      "last_keep": "Show winner abbreviation in final game status \u2014 'FINAL \u00b7 BOS +5' instead of 'FINAL \u00b7 +5', making it ",
+      "last_time": "2026-03-18T00:07:52Z"
     }
   ],
   "recent": [
+    {
+      "time": "2026-03-18T00:07:52Z",
+      "instance": "nba",
+      "desc": "Show winner abbreviation in final game status \u2014 'FINAL \u00b7 BOS +5' instead of 'FINAL \u00b7 +5', making it "
+    },
     {
       "time": "2026-03-18T00:04:29Z",
       "instance": "nba",
@@ -57,11 +62,6 @@
       "time": "2026-03-17T23:36:27Z",
       "instance": "nba",
       "desc": "Add local timezone abbreviation to game times \u2014 scheduled games now show e.g. '7:00 PM PST' instead "
-    },
-    {
-      "time": "2026-03-17T23:33:45Z",
-      "instance": "nba",
-      "desc": "Show scheduled game times in local timezone \u2014 replaced ESPN's ET-hardcoded time string (e.g. '7:00 P"
     }
   ]
 }
