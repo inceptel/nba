@@ -117,6 +117,9 @@ h1 { font-size: 22px; font-weight: 700; color: #fff; letter-spacing: -0.5px; }
 .act-inst.nba       { color: var(--nba); }
 .act-inst.dashboard { color: var(--dashboard); }
 .act-desc { color: #cbd5e1; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.activity-row { cursor: pointer; }
+.activity-row.expanded { align-items: flex-start; flex-wrap: wrap; }
+.activity-row.expanded .act-desc { white-space: normal; overflow: visible; text-overflow: unset; flex-basis: 100%; margin-top: 4px; }
 .act-status { font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 99px; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
 .act-status.keep   { background: #14532d; color: #4ade80; }
 .act-status.revert { background: #3b1515; color: #f87171; }
@@ -286,6 +289,12 @@ async function load() {
 
 load();
 setInterval(load, 30000);
+
+// Click activity rows to expand/collapse full description
+document.getElementById('activity').addEventListener('click', e => {
+  const row = e.target.closest('.activity-row');
+  if (row) row.classList.toggle('expanded');
+});
 
 // Refresh relative timestamps every 15s without a network call
 setInterval(() => {

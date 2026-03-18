@@ -797,8 +797,10 @@ async function loadLeaders() {
         const headshot = athlete.headshot?.href || athlete.headshot || '';
         const val = entry.displayValue ?? (entry.value !== undefined ? parseFloat(entry.value).toFixed(1) : '-');
         const headshotHtml = headshot ? `<img class="leader-headshot" src="${headshot}" alt="" onerror="this.style.display='none'">` : `<span style="display:inline-block;width:26px;height:26px;border-radius:50%;background:${teamColor}30;margin-right:6px;vertical-align:middle"></span>`;
+        const rankColor = i === 0 ? '#f5c842' : i === 1 ? '#b0b8c8' : i === 2 ? '#cd7f32' : '';
+        const rankStyle = rankColor ? ` style="color:${rankColor};font-weight:700"` : '';
         html += `<tr>
-          <td class="leader-rank">${i + 1}</td>
+          <td class="leader-rank"${rankStyle}>${i + 1}</td>
           <td style="width:100%">
             <div style="display:flex;align-items:center">${headshotHtml}<div><div class="leader-name">${name}</div><div class="leader-team" style="color:${teamColor}">${team}</div></div></div>
           </td>

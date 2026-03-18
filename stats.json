@@ -1,18 +1,28 @@
 {
-  "updated": "2026-03-18T00:41:43.588756+00:00",
+  "updated": "2026-03-18T00:44:05.094576+00:00",
   "instances": [
     {
       "name": "nba",
       "url": "https://allan.feather-cloud.dev/public/nba/",
       "running": true,
-      "keeps": 59,
+      "keeps": 61,
       "reverts": 0,
       "crashes": 0,
-      "last_keep": "Color-code PCT column in standings \u2014 winning percentage above .500 shown in green, below .500 in red",
-      "last_time": "2026-03-18T00:39:01Z"
+      "last_keep": "Add medal colors to leaders tab ranks \u2014 gold/silver/bronze for top 3 ranks in each stat category, bo",
+      "last_time": "2026-03-18T00:44:02Z"
     }
   ],
   "recent": [
+    {
+      "time": "2026-03-18T00:44:02Z",
+      "instance": "nba",
+      "desc": "Add medal colors to leaders tab ranks \u2014 gold/silver/bronze for top 3 ranks in each stat category, bo"
+    },
+    {
+      "time": "2026-03-18T00:41:48Z",
+      "instance": "nba",
+      "desc": "Add Leaders tab \u2014 shows top 10 players in PPG, RPG, APG, SPG, BPG, FG%, 3P%, FT% using ESPN leaders "
+    },
     {
       "time": "2026-03-18T00:39:01Z",
       "instance": "nba",
@@ -52,16 +62,6 @@
       "time": "2026-03-18T00:17:11Z",
       "instance": "nba",
       "desc": "Add score deficit indicator to live game cards \u2014 trailing team's score shows small muted '-X' suffix"
-    },
-    {
-      "time": "2026-03-18T00:12:53Z",
-      "instance": "nba",
-      "desc": "Add game progress bar to live game cards \u2014 thin 2px green bar below game header shows 0f 48-min regu"
-    },
-    {
-      "time": "2026-03-18T00:07:52Z",
-      "instance": "nba",
-      "desc": "Show winner abbreviation in final game status \u2014 'FINAL \u00b7 BOS +5' instead of 'FINAL \u00b7 +5', making it "
     }
   ]
 }

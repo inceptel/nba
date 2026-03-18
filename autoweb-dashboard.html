@@ -207,8 +207,10 @@ function renderCard(inst, recent) {
     <div class="card" data-instance="${inst.name}">
       <div class="card-header">
         <span class="card-name">${inst.name}<span class="iter-badge">${inst.keeps + inst.reverts + inst.crashes} iters</span></span>
-        ${inst.reverts === 0 && inst.crashes === 0 && inst.keeps > 0 ? '<span class="status-pill flawless">flawless</span>' : ''}
-        <span class="status-pill ${inst.running ? 'running' : 'stopped'}">${inst.running ? 'running' : 'stopped'}</span>
+        <div style="display:flex;gap:6px;align-items:center">
+          ${inst.reverts === 0 && inst.crashes === 0 && inst.keeps > 0 ? '<span class="status-pill flawless">flawless</span>' : ''}
+          <span class="status-pill ${inst.running ? 'running' : 'stopped'}">${inst.running ? 'running' : 'stopped'}</span>
+        </div>
       </div>
       <div class="stats">
         <div class="stat"><div class="stat-val keeps">${inst.keeps}</div><div class="stat-label">keeps</div></div>
