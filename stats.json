@@ -1,18 +1,23 @@
 {
-  "updated": "2026-03-18T00:13:31.261615+00:00",
+  "updated": "2026-03-18T00:20:07.638728+00:00",
   "instances": [
     {
       "name": "nba",
       "url": "https://allan.feather-cloud.dev/public/nba/",
       "running": true,
-      "keeps": 51,
+      "keeps": 52,
       "reverts": 0,
       "crashes": 0,
-      "last_keep": "Add game progress bar to live game cards \u2014 thin 2px green bar below game header shows 0f 48-min regu",
-      "last_time": "2026-03-18T00:12:53Z"
+      "last_keep": "Add score deficit indicator to live game cards \u2014 trailing team's score shows small muted '-X' suffix",
+      "last_time": "2026-03-18T00:17:11Z"
     }
   ],
   "recent": [
+    {
+      "time": "2026-03-18T00:17:11Z",
+      "instance": "nba",
+      "desc": "Add score deficit indicator to live game cards \u2014 trailing team's score shows small muted '-X' suffix"
+    },
     {
       "time": "2026-03-18T00:12:53Z",
       "instance": "nba",
@@ -57,11 +62,6 @@
       "time": "2026-03-17T23:42:18Z",
       "instance": "nba",
       "desc": "Color-code seed numbers in standings \u2014 gold for playoff seeds 1-6, blue/accent for play-in seeds 7-1"
-    },
-    {
-      "time": "2026-03-17T23:40:06Z",
-      "instance": "nba",
-      "desc": "Color-code W-L records in standings (L10/HOME/ROAD/CONF) \u2014 green for winning records, red for losing"
     }
   ]
 }

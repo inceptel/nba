@@ -81,12 +81,15 @@ h1 { font-size: 22px; font-weight: 700; color: #fff; letter-spacing: -0.5px; }
 .run-rate { font-size: 10px; color: var(--muted); font-weight: 400; margin-left: auto; }
 .keep-rate-bar { height: 3px; background: var(--bg3); border-radius: 2px; margin-bottom: 8px; overflow: hidden; }
 .keep-rate-fill { height: 100%; border-radius: 2px; transition: width 0.6s ease; }
-.sparkline { display: flex; gap: 3px; margin-bottom: 10px; align-items: center; }
+.sparkline-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.sparkline { display: flex; gap: 3px; align-items: center; }
 .spark-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
 .spark-dot.keep   { background: #4ade80; }
 .spark-dot.revert { background: #f87171; }
 .spark-dot.crash  { background: #fbbf24; }
 .spark-dot.empty  { background: var(--bg3); }
+.streak-label { font-size: 10px; color: var(--muted); white-space: nowrap; }
+.streak-val { color: #4ade80; font-weight: 700; }
 .last-keep {
   font-size: 11px; color: var(--muted); line-height: 1.5;
   border-top: 1px solid var(--border); padding-top: 10px;
@@ -152,6 +155,17 @@ function relTime(iso) {
   return Math.floor(diff / 86400) + 'd ago';
 }
 
+function calcStreak(instName, recent, totalKeeps) {
+  const entries = (recent || []).filter(r => r.instance === instName);
+  let n = 0;
+  for (const e of entries) {
+    if ((e.status || 'keep') === 'keep') n++;
+    else break;
+  }
+  if (n === entries.length && totalKeeps > entries.length) return n + '+';
+  return String(n);
+}
+
 function keepRate(instName, recent) {
   const hourAgo = Date.now() - 3600000;
   return (recent || []).filter(r => r.instance === instName && new Date(r.time) > hourAgo).length;
@@ -189,10 +203,11 @@ function renderCard(inst, recent) {
               dots.push(`<span class="spark-dot ${s}" title="${s}: ${e.desc ? e.desc.slice(0, 60) : ''}"></span>`);
             }
           }
-          return `<div class="sparkline">${dots.join('')}</div>`;
+          const s = calcStreak(inst.name, recent, inst.keeps);
+          return `<div class="sparkline-row"><div class="sparkline">${dots.join('')}</div><span class="streak-label">streak: <span class="streak-val">${s}</span></span></div>`;
         })()}
       <div class="last-keep" title="${inst.last_keep || ''}">
-        ${inst.last_time ? `<span class="ts">${relTime(inst.last_time)}</span>` : ''}
+        ${inst.last_time ? `<span class="ts" data-time="${inst.last_time}">${relTime(inst.last_time)}</span>` : ''}
         ${inst.last_keep || '<em style="color:#475569">no keeps yet</em>'}
       </div>
       ${inst.url ? `<a class="card-link" href="${inst.url}" target="_blank">↗ ${inst.url.replace(/^https?:\/\//, '').replace(/\/$/, '')}</a>` : ''}
@@ -204,7 +219,7 @@ function renderActivity(recent) {
     return '<div class="activity-row"><span class="act-desc" style="color:#475569">no activity yet</span></div>';
   return recent.map(r => `
     <div class="activity-row" data-instance="${r.instance}">
-      <span class="act-time">${relTime(r.time)}</span>
+      <span class="act-time" data-time="${r.time}">${relTime(r.time)}</span>
       <span class="act-inst ${r.instance}">${r.instance}</span>
       <span class="act-status ${r.status || 'keep'}">${r.status || 'keep'}</span>
       <span class="act-desc" title="${r.desc}">${r.desc}</span>
@@ -218,7 +233,9 @@ async function load() {
     const data = await r.json();
     document.getElementById('total-keeps').textContent =
       data.instances.reduce((s, i) => s + i.keeps, 0).toLocaleString();
-    document.getElementById('updated').textContent = 'updated ' + relTime(data.updated);
+    const updEl = document.getElementById('updated');
+    updEl.textContent = 'updated ' + relTime(data.updated);
+    updEl.dataset.time = data.updated;
     document.getElementById('cards').innerHTML = data.instances.map(i => renderCard(i, data.recent)).join('');
     document.getElementById('activity').innerHTML = renderActivity(data.recent);
   } catch (e) {
@@ -229,6 +246,18 @@ async function load() {
 
 load();
 setInterval(load, 30000);
+
+// Refresh relative timestamps every 15s without a network call
+setInterval(() => {
+  document.querySelectorAll('[data-time]').forEach(el => {
+    const t = el.dataset.time;
+    if (el.id === 'updated') {
+      el.textContent = 'updated ' + relTime(t);
+    } else {
+      el.textContent = relTime(t);
+    }
+  });
+}, 15000);
 </script>
 </body>
 </html>

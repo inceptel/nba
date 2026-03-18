@@ -99,7 +99,9 @@
   .standings-conf { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: visible; }
   .standings-conf-header { padding: 8px 12px; background: var(--surface2); border-bottom: 1px solid var(--border); font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: var(--accent); text-transform: uppercase; border-radius: 8px 8px 0 0; }
   .standings-table { width: 100%; border-collapse: collapse; }
-  .standings-table th { padding: 5px 8px; font-size: 10px; color: var(--muted); font-weight: 600; text-align: right; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  .standings-table th { padding: 5px 8px; font-size: 10px; color: var(--muted); font-weight: 600; text-align: right; border-bottom: 1px solid var(--border); white-space: nowrap; cursor: pointer; user-select: none; }
+  .standings-table th:hover { color: var(--text); }
+  .standings-table th.sorted { color: var(--accent); }
   .standings-table th:first-child { text-align: left; padding-left: 12px; }
   .standings-table td { padding: 5px 8px; font-size: 11px; text-align: right; border-bottom: 1px solid var(--border); white-space: nowrap; }
   .standings-table td:first-child { text-align: left; padding-left: 12px; }
@@ -608,6 +610,34 @@ if (localStorage.getItem('nba-theme') === 'light') {
 let standingsLoaded = false;
 let standingsLastFetched = null;
 
+function recordSortVal(rec) {
+  if (!rec || rec === '-') return -999;
+  const m = String(rec).replace(/<[^>]+>/g, '').match(/^(\d+)-(\d+)$/);
+  if (!m) return -999;
+  return parseInt(m[1]);
+}
+
+function sortTable(th) {
+  const table = th.closest('table');
+  const tbody = table.querySelector('tbody');
+  const idx = th.cellIndex;
+  const currently = th.dataset.sortDir;
+  const newDir = currently === 'desc' ? 'asc' : 'desc';
+  // Clear all sort indicators
+  table.querySelectorAll('th').forEach(h => { delete h.dataset.sortDir; h.classList.remove('sorted'); h.textContent = h.textContent.replace(/ [▼▲]$/, ''); });
+  th.dataset.sortDir = newDir;
+  th.classList.add('sorted');
+  th.textContent = th.textContent + (newDir === 'desc' ? ' ▼' : ' ▲');
+  const rows = Array.from(tbody.rows);
+  rows.sort((a, b) => {
+    const av = parseFloat(a.cells[idx]?.dataset.val ?? 0) || 0;
+    const bv = parseFloat(b.cells[idx]?.dataset.val ?? 0) || 0;
+    return newDir === 'desc' ? bv - av : av - bv;
+  });
+  // Playoff lines are positional — strip after sort, seed colors remain
+  rows.forEach(r => { r.classList.remove('playoffs-line', 'playin-line'); tbody.appendChild(r); });
+}
+
 function refreshStandings() {
   standingsLoaded = false;
   loadStandings();
@@ -641,7 +671,7 @@ async function loadStandings() {
         <div class="standings-conf-header">${confName}</div>
         <div class="standings-scroll"><table class="standings-table">
           <thead><tr>
-            <th>Team</th><th>W</th><th>L</th><th>PCT</th><th>GB</th><th>DIFF</th><th>CONF</th><th>HOME</th><th>ROAD</th><th>L10</th><th>STRK</th>
+            <th onclick="sortTable(this)">Team</th><th onclick="sortTable(this)">W</th><th onclick="sortTable(this)">L</th><th onclick="sortTable(this)">PCT</th><th onclick="sortTable(this)">GB</th><th onclick="sortTable(this)">DIFF</th><th onclick="sortTable(this)">CONF</th><th onclick="sortTable(this)">HOME</th><th onclick="sortTable(this)">ROAD</th><th onclick="sortTable(this)">L10</th><th onclick="sortTable(this)">STRK</th>
           </tr></thead>
           <tbody>`;
       standings.forEach((entry, idx) => {
@@ -686,18 +716,19 @@ async function loadStandings() {
         const teamColor = TEAM_COLORS[abbr]?.[0] || '#555';
         const playoffLine = idx === 6 ? ' class="playoffs-line"' : idx === 10 ? ' class="playin-line"' : '';
         const seedColor = idx < 6 ? 'var(--gold)' : idx < 10 ? 'var(--accent)' : 'var(--muted)';
+        const gbNum = (gb !== '-' && gb !== 0 && gb !== '0') ? parseFloat(gb) || 0 : 0;
         html += `<tr${playoffLine}>
-          <td style="border-left:3px solid ${teamColor}99"><span class="standings-rank" style="color:${seedColor}">${idx+1}</span> <img class="standings-team-logo" src="${logoUrl}" alt="${abbr}" onerror="this.style.display='none'"><span class="standings-team-name">${displayName}</span></td>
-          <td>${wins}</td>
-          <td>${losses}</td>
-          <td class="standings-pct">${pctDisplay}</td>
-          <td class="standings-gb">${gbDisplay}</td>
-          <td>${diffHtml}</td>
-          <td class="standings-l10">${colorRecord(confRecord)}</td>
-          <td class="standings-l10">${colorRecord(homeRecord)}</td>
-          <td class="standings-l10">${colorRecord(roadRecord)}</td>
-          <td class="standings-l10">${l10}</td>
-          <td>${streakDisplay}</td>
+          <td data-val="${idx+1}" style="border-left:3px solid ${teamColor}99"><span class="standings-rank" style="color:${seedColor}">${idx+1}</span> <img class="standings-team-logo" src="${logoUrl}" alt="${abbr}" onerror="this.style.display='none'"><span class="standings-team-name">${displayName}</span></td>
+          <td data-val="${wins !== '-' ? wins : 0}">${wins}</td>
+          <td data-val="${losses !== '-' ? losses : 0}">${losses}</td>
+          <td data-val="${pct !== '' && pct !== '-' ? parseFloat(pct)*1000 : 0}" class="standings-pct">${pctDisplay}</td>
+          <td data-val="${gbNum}" class="standings-gb">${gbDisplay}</td>
+          <td data-val="${diffVal !== null && !isNaN(diffVal) ? diffVal : -999}">${diffHtml}</td>
+          <td data-val="${recordSortVal(confRecord)}" class="standings-l10">${colorRecord(confRecord)}</td>
+          <td data-val="${recordSortVal(homeRecord)}" class="standings-l10">${colorRecord(homeRecord)}</td>
+          <td data-val="${recordSortVal(roadRecord)}" class="standings-l10">${colorRecord(roadRecord)}</td>
+          <td data-val="${recordSortVal(l10Raw)}" class="standings-l10">${l10}</td>
+          <td data-val="${streakRaw !== undefined ? streakRaw : 0}">${streakDisplay}</td>
         </tr>`;
       });
       html += '</tbody></table></div></div>';
