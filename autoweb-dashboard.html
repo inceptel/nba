@@ -79,8 +79,14 @@ h1 { font-size: 22px; font-weight: 700; color: #fff; letter-spacing: -0.5px; }
   display: flex; align-items: center; gap: 10px;
 }
 .run-rate { font-size: 10px; color: var(--muted); font-weight: 400; margin-left: auto; }
-.keep-rate-bar { height: 3px; background: var(--bg3); border-radius: 2px; margin-bottom: 10px; overflow: hidden; }
+.keep-rate-bar { height: 3px; background: var(--bg3); border-radius: 2px; margin-bottom: 8px; overflow: hidden; }
 .keep-rate-fill { height: 100%; border-radius: 2px; transition: width 0.6s ease; }
+.sparkline { display: flex; gap: 3px; margin-bottom: 10px; align-items: center; }
+.spark-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+.spark-dot.keep   { background: #4ade80; }
+.spark-dot.revert { background: #f87171; }
+.spark-dot.crash  { background: #fbbf24; }
+.spark-dot.empty  { background: var(--bg3); }
 .last-keep {
   font-size: 11px; color: var(--muted); line-height: 1.5;
   border-top: 1px solid var(--border); padding-top: 10px;
@@ -167,6 +173,19 @@ function renderCard(inst, recent) {
           const pct = Math.round(inst.keeps / total * 100);
           const color = pct >= 90 ? '#4ade80' : pct >= 70 ? '#fbbf24' : '#f87171';
           return `<div class="keep-rate"><span style="color:${color}">${pct}% kept</span><span style="color:#475569"> (${total} total)</span>${rateStr}</div><div class="keep-rate-bar"><div class="keep-rate-fill" style="width:${pct}%;background:${color}"></div></div>`;
+        })()}
+      ${(function() {
+          const instEntries = (recent || []).filter(r => r.instance === inst.name).slice(0, 10);
+          const dots = [];
+          for (let i = 9; i >= 0; i--) {
+            const e = instEntries[9 - i];
+            if (!e) dots.push('<span class="spark-dot empty" title="no data"></span>');
+            else {
+              const s = e.status || 'keep';
+              dots.push(`<span class="spark-dot ${s}" title="${s}: ${e.desc ? e.desc.slice(0, 60) : ''}"></span>`);
+            }
+          }
+          return `<div class="sparkline">${dots.join('')}</div>`;
         })()}
       <div class="last-keep">
         ${inst.last_time ? `<span class="ts">${relTime(inst.last_time)}</span>` : ''}

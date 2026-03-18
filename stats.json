@@ -1,18 +1,23 @@
 {
-  "updated": "2026-03-17T23:58:39.585321+00:00",
+  "updated": "2026-03-18T00:00:25.690694+00:00",
   "instances": [
     {
       "name": "nba",
       "url": "https://allan.feather-cloud.dev/public/nba/",
       "running": true,
-      "keeps": 46,
+      "keeps": 47,
       "reverts": 0,
       "crashes": 0,
-      "last_keep": "Add standings refresh button and last-updated timestamp \u2014 standings tab now shows 'Updated X:XX PM \u00b7",
-      "last_time": "2026-03-17T23:52:26Z"
+      "last_keep": "Add player headshots to leader badges \u2014 tiny circular photos appear next to player names using ESPN ",
+      "last_time": "2026-03-17T23:59:02Z"
     }
   ],
   "recent": [
+    {
+      "time": "2026-03-17T23:59:02Z",
+      "instance": "nba",
+      "desc": "Add player headshots to leader badges \u2014 tiny circular photos appear next to player names using ESPN "
+    },
     {
       "time": "2026-03-17T23:52:26Z",
       "instance": "nba",
@@ -57,11 +62,6 @@
       "time": "2026-03-17T23:23:56Z",
       "instance": "nba",
       "desc": "Add CLOSE badge to live games within 5 points \u2014 pulsing gold badge in game header gives at-a-glance "
-    },
-    {
-      "time": "2026-03-17T23:19:35Z",
-      "instance": "nba",
-      "desc": "Add DIFF (point differential) column to standings table \u2014 shows season-aggregate point differential "
     }
   ]
 }

@@ -183,7 +183,7 @@ function renderActivity(recent) {
     <div class="activity-row">
       <span class="act-time">${relTime(r.time)}</span>
       <span class="act-inst ${r.instance}">${r.instance}</span>
-      <span class="act-status ${r.status || ''}">${r.status || '?'}</span>
+      <span class="act-status ${r.status || 'keep'}">${r.status || 'keep'}</span>
       <span class="act-desc">${r.desc}</span>
     </div>`).join('');
 }
