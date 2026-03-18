@@ -182,6 +182,23 @@ function avgIterTime(instName, recent) {
   return Math.round(avgSec / 60) + 'm/iter';
 }
 
+function nextRunLabel(instName, recent) {
+  const entries = (recent || []).filter(r => r.instance === instName);
+  if (entries.length < 2 || !entries[0] || !entries[0].time) return null;
+  let totalDiff = 0, count = 0;
+  for (let i = 0; i < entries.length - 1; i++) {
+    const diff = new Date(entries[i].time) - new Date(entries[i + 1].time);
+    if (diff > 0) { totalDiff += diff; count++; }
+  }
+  if (count === 0) return null;
+  const avgMs = totalDiff / count;
+  const nextTime = new Date(new Date(entries[0].time).getTime() + avgMs);
+  const remSec = Math.round((nextTime - Date.now()) / 1000);
+  if (remSec <= 0) return 'next ~now';
+  if (remSec < 60) return `next ~${remSec}s`;
+  return `next ~${Math.round(remSec / 60)}m`;
+}
+
 function renderCard(inst, recent) {
   return `
     <div class="card" data-instance="${inst.name}">
@@ -198,7 +215,8 @@ function renderCard(inst, recent) {
       ${(function() {
           const total = inst.keeps + inst.reverts;
           const iter = avgIterTime(inst.name, recent);
-          const rateStr = iter ? `<span class="run-rate">~${iter}</span>` : '';
+          const nextLbl = inst.running ? nextRunLabel(inst.name, recent) : null;
+          const rateStr = iter ? `<span class="run-rate">~${iter}${nextLbl ? ` · ${nextLbl}` : ''}</span>` : '';
           if (total === 0) return `<div class="keep-rate"><span style="color:#475569">no data</span>${rateStr}</div><div class="keep-rate-bar"><div class="keep-rate-fill" style="width:0%"></div></div>`;
           const pct = Math.round(inst.keeps / total * 100);
           const color = pct >= 90 ? '#4ade80' : pct >= 70 ? '#fbbf24' : '#f87171';

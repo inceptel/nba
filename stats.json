@@ -1,18 +1,23 @@
 {
-  "updated": "2026-03-18T00:39:00.067583+00:00",
+  "updated": "2026-03-18T00:41:43.588756+00:00",
   "instances": [
     {
       "name": "nba",
       "url": "https://allan.feather-cloud.dev/public/nba/",
       "running": true,
-      "keeps": 58,
+      "keeps": 59,
       "reverts": 0,
       "crashes": 0,
-      "last_keep": "Add keyboard arrow-key navigation for date browsing \u2014 left/right arrow keys cycle through prev/next ",
-      "last_time": "2026-03-18T00:34:42Z"
+      "last_keep": "Color-code PCT column in standings \u2014 winning percentage above .500 shown in green, below .500 in red",
+      "last_time": "2026-03-18T00:39:01Z"
     }
   ],
   "recent": [
+    {
+      "time": "2026-03-18T00:39:01Z",
+      "instance": "nba",
+      "desc": "Color-code PCT column in standings \u2014 winning percentage above .500 shown in green, below .500 in red"
+    },
     {
       "time": "2026-03-18T00:34:42Z",
       "instance": "nba",
@@ -57,11 +62,6 @@
       "time": "2026-03-18T00:07:52Z",
       "instance": "nba",
       "desc": "Show winner abbreviation in final game status \u2014 'FINAL \u00b7 BOS +5' instead of 'FINAL \u00b7 +5', making it "
-    },
-    {
-      "time": "2026-03-18T00:04:29Z",
-      "instance": "nba",
-      "desc": "Add manual refresh button (\u21ba) to scores header \u2014 lets users refresh immediately without waiting for "
     }
   ]
 }

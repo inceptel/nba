@@ -120,6 +120,20 @@
   .playoffs-line td { border-top: 2px solid var(--accent) !important; }
   .playin-line td { border-top: 1px dashed var(--muted) !important; }
 
+  .leaders-grid { padding: 12px; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+  .leaders-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .leaders-card-header { padding: 8px 12px; background: var(--surface2); border-bottom: 1px solid var(--border); font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: var(--accent); text-transform: uppercase; }
+  .leaders-table { width: 100%; border-collapse: collapse; }
+  .leaders-table td { padding: 6px 10px; font-size: 11px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  .leaders-table tr:last-child td { border-bottom: none; }
+  .leaders-table tr:hover td { background: var(--surface2); }
+  .leader-rank { color: var(--muted); font-size: 10px; width: 18px; text-align: right; padding-right: 6px; }
+  .leader-headshot { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; vertical-align: middle; margin-right: 6px; }
+  .leader-name { font-weight: 500; color: var(--text); }
+  .leader-team { font-size: 10px; color: var(--muted); margin-top: 1px; }
+  .leader-stat { font-size: 14px; font-weight: 700; color: var(--accent); text-align: right; white-space: nowrap; padding-left: 8px; }
+  .leader-stat-label { font-size: 9px; color: var(--muted); text-align: right; }
+
   body.light {
     --bg: #f4f4f9;
     --surface: #ffffff;
@@ -174,6 +188,7 @@
 <div class="tabs">
   <button class="tab active" id="tab-scores" onclick="switchTab('scores')">Scores</button>
   <button class="tab" id="tab-standings" onclick="switchTab('standings')">Standings</button>
+  <button class="tab" id="tab-leaders" onclick="switchTab('leaders')">Leaders</button>
 </div>
 
 <div id="scores-panel">
@@ -196,6 +211,14 @@
   <div id="standings-container">
     <div class="loading">
       <div class="spinner"></div><br>Loading standings...
+    </div>
+  </div>
+</div>
+
+<div id="leaders-panel" style="display:none">
+  <div id="leaders-container">
+    <div class="loading">
+      <div class="spinner"></div><br>Loading leaders...
     </div>
   </div>
 </div>
@@ -714,15 +737,82 @@ function refreshStandings() {
   loadStandings();
 }
 
+let leadersLoaded = false;
+
 function switchTab(tab) {
   document.getElementById('tab-scores').classList.toggle('active', tab === 'scores');
   document.getElementById('tab-standings').classList.toggle('active', tab === 'standings');
+  document.getElementById('tab-leaders').classList.toggle('active', tab === 'leaders');
   document.getElementById('scores-panel').style.display = tab === 'scores' ? '' : 'none';
   document.getElementById('standings-panel').style.display = tab === 'standings' ? '' : 'none';
+  document.getElementById('leaders-panel').style.display = tab === 'leaders' ? '' : 'none';
   document.getElementById('date-nav').style.display = tab === 'scores' ? '' : 'none';
   if (tab === 'standings' && !standingsLoaded) {
     standingsLoaded = true;
     loadStandings();
+  }
+  if (tab === 'leaders' && !leadersLoaded) {
+    leadersLoaded = true;
+    loadLeaders();
+  }
+}
+
+async function loadLeaders() {
+  const container = document.getElementById('leaders-container');
+  try {
+    const r = await fetch('https://site.api.espn.com/apis/site/v2/sports/basketball/nba/leaders');
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    const data = await r.json();
+    const categories = data.categories || [];
+    const WANTED = ['pointsPerGame', 'reboundsPerGame', 'assistsPerGame', 'stealsPerGame', 'blocksPerGame', 'fieldGoalPct', 'threePointPct', 'freeThrowPct'];
+    const CAT_LABELS = {
+      'pointsPerGame': 'Points', 'reboundsPerGame': 'Rebounds', 'assistsPerGame': 'Assists',
+      'stealsPerGame': 'Steals', 'blocksPerGame': 'Blocks', 'fieldGoalPct': 'FG%',
+      'threePointPct': '3P%', 'freeThrowPct': 'FT%'
+    };
+    const CAT_UNITS = {
+      'pointsPerGame': 'PPG', 'reboundsPerGame': 'RPG', 'assistsPerGame': 'APG',
+      'stealsPerGame': 'SPG', 'blocksPerGame': 'BPG', 'fieldGoalPct': 'FG%',
+      'threePointPct': '3P%', 'freeThrowPct': 'FT%'
+    };
+    // Sort categories by WANTED order, include any others at end
+    const sorted = [...categories].sort((a, b) => {
+      const ai = WANTED.indexOf(a.name); const bi = WANTED.indexOf(b.name);
+      if (ai === -1 && bi === -1) return 0;
+      if (ai === -1) return 1; if (bi === -1) return -1;
+      return ai - bi;
+    });
+    let html = '<div class="leaders-grid">';
+    for (const cat of sorted) {
+      const leaders = cat.leaders || [];
+      if (!leaders.length) continue;
+      const label = CAT_LABELS[cat.name] || cat.displayName || cat.name;
+      const unit = CAT_UNITS[cat.name] || '';
+      html += `<div class="leaders-card"><div class="leaders-card-header">${label}</div><table class="leaders-table"><tbody>`;
+      leaders.slice(0, 10).forEach((entry, i) => {
+        const athlete = entry.athlete || entry;
+        const name = athlete.shortName || athlete.displayName || '';
+        const team = athlete.team?.abbreviation || athlete.teamAbbreviation || '';
+        const teamColor = TEAM_COLORS[team]?.[0] || '#555';
+        const headshot = athlete.headshot?.href || athlete.headshot || '';
+        const val = entry.displayValue ?? (entry.value !== undefined ? parseFloat(entry.value).toFixed(1) : '-');
+        const headshotHtml = headshot ? `<img class="leader-headshot" src="${headshot}" alt="" onerror="this.style.display='none'">` : `<span style="display:inline-block;width:26px;height:26px;border-radius:50%;background:${teamColor}30;margin-right:6px;vertical-align:middle"></span>`;
+        html += `<tr>
+          <td class="leader-rank">${i + 1}</td>
+          <td style="width:100%">
+            <div style="display:flex;align-items:center">${headshotHtml}<div><div class="leader-name">${name}</div><div class="leader-team" style="color:${teamColor}">${team}</div></div></div>
+          </td>
+          <td><div class="leader-stat">${val}</div><div class="leader-stat-label">${unit}</div></td>
+        </tr>`;
+      });
+      html += '</tbody></table></div>';
+    }
+    html += '</div>';
+    const updatedTime = new Date().toLocaleTimeString('en-US', {hour:'numeric',minute:'2-digit'});
+    const bar = `<div style="padding:8px 14px 2px;display:flex;align-items:center;gap:8px;color:var(--muted);font-size:11px"><span>Updated ${updatedTime}</span><button onclick="leadersLoaded=false;loadLeaders()" style="background:none;border:1px solid var(--border);color:var(--muted);font-size:11px;padding:2px 8px;border-radius:4px;cursor:pointer;font-family:inherit;transition:border-color 0.2s,color 0.2s" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">↺ Refresh</button></div>`;
+    container.innerHTML = bar + html;
+  } catch (e) {
+    container.innerHTML = `<div class="error">Failed to load leaders: ${e.message}</div>`;
   }
 }
 
