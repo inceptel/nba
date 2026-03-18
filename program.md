@@ -57,7 +57,7 @@ LOOP FOREVER:
 
 1. **Screenshot** the live URL with agent-browser. Read `index.html`. Check `results.tsv` for recent attempts.
 
-   **CURRENT FOCUS: advanced features + deep polish** — All known bugs are fixed. Focus on new data features (box scores, team stats, injury reports, head-to-head records) and polishing existing features. Make every iteration count.
+   **CURRENT FOCUS: box scores** — All known bugs are fixed and Leaders/Standings tabs are fully polished. Top priority: add a box score / team stats section to final and live game cards (FG%, rebounds, turnovers, assists) using the ESPN gamecast API. After that: injury reports, head-to-head records.
 
 2. **Check deadline**: `echo $(($(cat /home/user/autoweb-nba/deadline 2>/dev/null || echo 9999999999) - $(date +%s)))s left`
    - If the deadline file is missing, continue normally (no hard stop).
@@ -96,7 +96,8 @@ Mark fixed issues with ~~strikethrough~~ rather than deleting them.
 
 ### Potential next features (no known bugs remain)
 
-- MEDIUM: Box score / team stats for final/live games (FG%, rebounds, turnovers etc.)
+- ~~Leaders tab polish: headshots, medal ranks, team logos, relative stat bars~~ (fully done)
+- **MEDIUM (TOP PRIORITY): Box score / team stats for final/live games** — FG%, rebounds, turnovers, assists per team; use ESPN gamecast/summary API endpoint
 - MEDIUM: Injury report — show key player injuries on game cards (ESPN injury API exists)
 - LOW: Head-to-head season record shown on game cards
 - LOW: Team schedule popup — click team logo/name to see upcoming games
@@ -135,3 +136,4 @@ This repo demonstrates the full autoweb feature set:
 - **ESPN API reliability**: `site.api.espn.com` endpoints can go 404 without warning — always verify a new API endpoint returns 200 with valid data before building on it
 - **Leaders API**: `site.api.espn.com/apis/site/v2/sports/basketball/nba/leaders` is 404 (broken). Use `sports.core.api.espn.com/v2/sports/basketball/leagues/nba/seasons/{year}/types/2/leaders` instead. Note: this API uses `$ref` links for athletes; batch-fetch athlete names with `Promise.all`.
 - **Regression risk**: the dashboard now has 15+ features — when verifying a new iteration, check that the Standings tab, Leaders tab, and date navigation still work, not just the feature you changed
+- **Leaders tab complexity**: Leaders tab uses a hardcoded ESPN team ID → abbreviation map and batch-fetches `$ref` athlete links. If adding features to Leaders tab, validate that all 8 stat categories still render correctly after your change
