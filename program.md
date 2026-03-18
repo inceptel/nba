@@ -57,7 +57,7 @@ LOOP FOREVER:
 
 1. **Screenshot** the live URL with agent-browser. Read `index.html`. Check `results.tsv` for recent attempts.
 
-   **CURRENT FOCUS: box scores** — All known bugs are fixed and Leaders/Standings tabs are fully polished. Top priority: add a box score / team stats section to final and live game cards (FG%, rebounds, turnovers, assists) using the ESPN gamecast API. After that: injury reports, head-to-head records.
+   **CURRENT FOCUS: box scores** — All known bugs are fixed and Leaders/Standings tabs are fully polished. **DO NOT do any more polish work.** The ONLY acceptable next change is: add a box score / team stats section to final and live game cards (FG%, rebounds, turnovers, assists) using the ESPN gamecast API (`summary?event={gameId}`). Use a toggle button or `<details>` element to expand/collapse the box score per game card (lazy-fetch on expand). After box score: injury reports, head-to-head records.
 
 2. **Check deadline**: `echo $(($(cat /home/user/autoweb-nba/deadline 2>/dev/null || echo 9999999999) - $(date +%s)))s left`
    - If the deadline file is missing, continue normally (no hard stop).
@@ -97,7 +97,8 @@ Mark fixed issues with ~~strikethrough~~ rather than deleting them.
 ### Potential next features (no known bugs remain)
 
 - ~~Leaders tab polish: headshots, medal ranks, team logos, relative stat bars~~ (fully done)
-- **MEDIUM (TOP PRIORITY): Box score / team stats for final/live games** — FG%, rebounds, turnovers, assists per team; use ESPN gamecast/summary API: `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event={gameId}` (gameId = `event.id` from scoreboard). Key fields: `boxscore.teams[].statistics[]` for team totals (FG%, rebounds, turnovers, assists). IMPORTANT: fetch lazily on expand/click — do NOT fetch all games at page load (10+ parallel requests will be slow)
+- ~~Standings table columns: W/L/PCT/GB/HOME/ROAD/CONF/DIFF/L10/STRK, sortable, sticky team column~~ (fully done — no new columns needed)
+- **MEDIUM (TOP PRIORITY — NOT YET ATTEMPTED): Box score / team stats for final/live games** — FG%, rebounds, turnovers, assists per team; use ESPN gamecast/summary API: `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event={gameId}` (gameId = `event.id` from scoreboard). Key fields: `boxscore.teams[].statistics[]` for team totals (FG%, rebounds, turnovers, assists). IMPORTANT: fetch lazily on expand/click — do NOT fetch all games at page load (10+ parallel requests will be slow). Use a toggle button (`▼ Box Score`) or `<details>` element for the expand/collapse UI.
 - MEDIUM: Injury report — show key player injuries on game cards (ESPN injury API exists)
 - LOW: Head-to-head season record shown on game cards
 - LOW: Team schedule popup — click team logo/name to see upcoming games
@@ -138,3 +139,5 @@ This repo demonstrates the full autoweb feature set:
 - **Regression risk**: the dashboard now has 15+ features — when verifying a new iteration, check that the Standings tab, Leaders tab, and date navigation still work, not just the feature you changed
 - **Leaders tab complexity**: Leaders tab uses a hardcoded ESPN team ID → abbreviation map and batch-fetches `$ref` athlete links. If adding features to Leaders tab, validate that all 8 stat categories still render correctly after your change
 - **Box score API**: `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event={gameId}` — returns full game summary. `boxscore.teams[].statistics[]` has team totals (FG%, REB, TOV, AST, etc.). `boxscore.players[].statistics[]` has individual player lines. Fetch on-demand (not at page load) to avoid 10+ simultaneous requests.
+- **Box score UI pattern**: Use a toggle button (e.g., `▼ Box Score`) or `<details>` element per game card. Only fire the API fetch when the user expands. Cache the result on the DOM element so re-opens don't re-fetch.
+- **Polish moratorium**: Standings and Leaders tabs are fully complete. Do not add more polish features until box score is implemented.
