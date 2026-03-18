@@ -167,9 +167,18 @@ function calcStreak(instName, recent, totalKeeps) {
   return String(n);
 }
 
-function keepRate(instName, recent) {
-  const hourAgo = Date.now() - 3600000;
-  return (recent || []).filter(r => r.instance === instName && new Date(r.time) > hourAgo).length;
+function avgIterTime(instName, recent) {
+  const entries = (recent || []).filter(r => r.instance === instName);
+  if (entries.length < 2) return null;
+  let totalDiff = 0, count = 0;
+  for (let i = 0; i < entries.length - 1; i++) {
+    const diff = new Date(entries[i].time) - new Date(entries[i + 1].time);
+    if (diff > 0) { totalDiff += diff; count++; }
+  }
+  if (count === 0) return null;
+  const avgSec = Math.round(totalDiff / count / 1000);
+  if (avgSec < 60) return avgSec + 's/iter';
+  return Math.round(avgSec / 60) + 'm/iter';
 }
 
 function renderCard(inst, recent) {
@@ -187,8 +196,8 @@ function renderCard(inst, recent) {
       </div>
       ${(function() {
           const total = inst.keeps + inst.reverts;
-          const rate = keepRate(inst.name, recent);
-          const rateStr = rate > 0 ? `<span class="run-rate">~${rate}/hr</span>` : '';
+          const iter = avgIterTime(inst.name, recent);
+          const rateStr = iter ? `<span class="run-rate">~${iter}</span>` : '';
           if (total === 0) return `<div class="keep-rate"><span style="color:#475569">no data</span>${rateStr}</div><div class="keep-rate-bar"><div class="keep-rate-fill" style="width:0%"></div></div>`;
           const pct = Math.round(inst.keeps / total * 100);
           const color = pct >= 90 ? '#4ade80' : pct >= 70 ? '#fbbf24' : '#f87171';

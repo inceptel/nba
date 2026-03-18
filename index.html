@@ -619,6 +619,25 @@ document.getElementById('next-btn').addEventListener('click', () => {
 
 load().then(startCountdown);
 
+// Keyboard navigation: arrow left/right for date browsing
+document.addEventListener('keydown', (e) => {
+  // Ignore when focus is in an input or textarea
+  const tag = document.activeElement?.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+  if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    dateOffset--;
+    clearInterval(countdownTimer);
+    load(true).then(startCountdown);
+  } else if (e.key === 'ArrowRight') {
+    if (dateOffset >= 1) return;
+    e.preventDefault();
+    dateOffset++;
+    clearInterval(countdownTimer);
+    load(true).then(startCountdown);
+  }
+});
+
 function filterGames(query) {
   const clearBtn = document.getElementById('filter-clear-btn');
   if (clearBtn) clearBtn.style.display = query ? '' : 'none';

@@ -1,18 +1,23 @@
 {
-  "updated": "2026-03-18T00:31:25.700833+00:00",
+  "updated": "2026-03-18T00:34:20.206686+00:00",
   "instances": [
     {
       "name": "nba",
       "url": "https://allan.feather-cloud.dev/public/nba/",
       "running": true,
-      "keeps": 56,
+      "keeps": 57,
       "reverts": 0,
       "crashes": 0,
-      "last_keep": "Update section count badge when filtering \u2014 shows 'X/N' (matched/total) so users see filter impact a",
-      "last_time": "2026-03-18T00:29:30Z"
+      "last_keep": "Color-code team W-L records on game cards \u2014 winning records shown in green, losing records in red, m",
+      "last_time": "2026-03-18T00:32:26Z"
     }
   ],
   "recent": [
+    {
+      "time": "2026-03-18T00:32:26Z",
+      "instance": "nba",
+      "desc": "Color-code team W-L records on game cards \u2014 winning records shown in green, losing records in red, m"
+    },
     {
       "time": "2026-03-18T00:29:30Z",
       "instance": "nba",
@@ -57,11 +62,6 @@
       "time": "2026-03-18T00:01:30Z",
       "instance": "nba",
       "desc": "Fix footer autoweb dashboard link \u2014 was pointing to /public/autoweb-dashboard/ instead of /public/nb"
-    },
-    {
-      "time": "2026-03-17T23:59:02Z",
-      "instance": "nba",
-      "desc": "Add player headshots to leader badges \u2014 tiny circular photos appear next to player names using ESPN "
     }
   ]
 }
