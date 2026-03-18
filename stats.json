@@ -1,18 +1,23 @@
 {
-  "updated": "2026-03-18T00:24:30.210178+00:00",
+  "updated": "2026-03-18T00:28:45.068059+00:00",
   "instances": [
     {
       "name": "nba",
       "url": "https://allan.feather-cloud.dev/public/nba/",
       "running": true,
-      "keeps": 54,
+      "keeps": 55,
       "reverts": 0,
       "crashes": 0,
-      "last_keep": "Add team filter search box to scores tab \u2014 magnifying glass input above game cards filters visible g",
-      "last_time": "2026-03-18T00:23:54Z"
+      "last_keep": "Use shortDisplayName for team names on game cards \u2014 shows 'Celtics' instead of 'Boston Celtics' for ",
+      "last_time": "2026-03-18T00:26:22Z"
     }
   ],
   "recent": [
+    {
+      "time": "2026-03-18T00:26:22Z",
+      "instance": "nba",
+      "desc": "Use shortDisplayName for team names on game cards \u2014 shows 'Celtics' instead of 'Boston Celtics' for "
+    },
     {
       "time": "2026-03-18T00:23:54Z",
       "instance": "nba",
@@ -57,11 +62,6 @@
       "time": "2026-03-17T23:52:26Z",
       "instance": "nba",
       "desc": "Add standings refresh button and last-updated timestamp \u2014 standings tab now shows 'Updated X:XX PM \u00b7"
-    },
-    {
-      "time": "2026-03-17T23:48:18Z",
-      "instance": "nba",
-      "desc": "Add TODAY shortcut button to date navigation \u2014 button appears between date label and next arrow when"
     }
   ]
 }

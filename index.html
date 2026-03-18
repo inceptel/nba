@@ -616,13 +616,19 @@ function filterGames(query) {
   document.querySelectorAll('#games-container .game').forEach(el => {
     el.style.display = !q || el.textContent.toLowerCase().includes(q) ? '' : 'none';
   });
-  // Show/hide section labels based on visible games
+  // Show/hide section labels based on visible games; update count badge
   document.querySelectorAll('#games-container .section-label').forEach(label => {
     const nextSib = label.nextElementSibling;
     if (nextSib?.classList.contains('games')) {
-      const hasVisible = [...nextSib.querySelectorAll('.game')].some(g => g.style.display !== 'none');
+      const allGames = [...nextSib.querySelectorAll('.game')];
+      const visibleGames = allGames.filter(g => g.style.display !== 'none');
+      const hasVisible = visibleGames.length > 0;
       label.style.display = hasVisible ? '' : 'none';
       nextSib.style.display = hasVisible ? '' : 'none';
+      const countBadge = label.querySelector('.section-count');
+      if (countBadge) {
+        countBadge.textContent = q ? `${visibleGames.length}/${allGames.length}` : allGames.length;
+      }
     }
   });
 }

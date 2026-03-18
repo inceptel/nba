@@ -182,8 +182,8 @@ function renderCard(inst, recent) {
       </div>
       <div class="stats">
         <div class="stat"><div class="stat-val keeps">${inst.keeps}</div><div class="stat-label">keeps</div></div>
-        <div class="stat"><div class="stat-val reverts">${inst.reverts}</div><div class="stat-label">reverts</div></div>
-        <div class="stat"><div class="stat-val crashes">${inst.crashes}</div><div class="stat-label">crashes</div></div>
+        <div class="stat"><div class="stat-val ${inst.reverts > 0 ? 'reverts' : ''}" style="${inst.reverts === 0 ? 'color:var(--muted)' : ''}">${inst.reverts}</div><div class="stat-label">reverts</div></div>
+        <div class="stat"><div class="stat-val ${inst.crashes > 0 ? 'crashes' : ''}" style="${inst.crashes === 0 ? 'color:var(--muted)' : ''}">${inst.crashes}</div><div class="stat-label">crashes</div></div>
       </div>
       ${(function() {
           const total = inst.keeps + inst.reverts;
