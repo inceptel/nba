@@ -91,6 +91,9 @@ h1 { font-size: 22px; font-weight: 700; color: #fff; letter-spacing: -0.5px; }
 .spark-dot.empty  { background: var(--bg3); }
 .streak-label { font-size: 10px; color: var(--muted); white-space: nowrap; }
 .streak-val { color: #4ade80; font-weight: 700; }
+.milestone { font-size: 10px; color: var(--muted); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+.milestone-bar { flex: 1; height: 2px; background: var(--bg3); border-radius: 1px; overflow: hidden; }
+.milestone-fill { height: 100%; border-radius: 1px; background: var(--nba); opacity: 0.6; }
 .iter-badge { font-size: 10px; color: var(--muted); background: var(--bg3); border: 1px solid var(--border); padding: 1px 6px; border-radius: 99px; margin-left: 6px; }
 .last-keep {
   font-size: 11px; color: var(--muted); line-height: 1.5;
@@ -197,9 +200,15 @@ function nextRunLabel(instName, recent) {
   const avgMs = totalDiff / count;
   const nextTime = new Date(new Date(entries[0].time).getTime() + avgMs);
   const remSec = Math.round((nextTime - Date.now()) / 1000);
-  if (remSec <= 0) return 'next ~now';
+  if (remSec <= 0) return '<span style="color:var(--nba);animation:pulse 1s infinite;font-weight:700">next ~now</span>';
   if (remSec < 60) return `next ~${remSec}s`;
   return `next ~${Math.round(remSec / 60)}m`;
+}
+
+function nextMilestone(keeps) {
+  const milestones = [10, 25, 50, 75, 100, 150, 200, 300, 500];
+  for (const m of milestones) { if (keeps < m) return m; }
+  return Math.ceil((keeps + 1) / 100) * 100;
 }
 
 function renderCard(inst, recent) {
@@ -238,8 +247,17 @@ function renderCard(inst, recent) {
               dots.push(`<span class="spark-dot ${s}" title="${s}: ${e.desc ? e.desc.slice(0, 60) : ''}"></span>`);
             }
           }
-          const s = calcStreak(inst.name, recent, inst.keeps);
+          const s = (inst.reverts === 0 && inst.crashes === 0 && inst.keeps > 0)
+            ? String(inst.keeps)
+            : calcStreak(inst.name, recent, inst.keeps);
           return `<div class="sparkline-row"><div class="sparkline">${dots.join('')}</div><span class="streak-label">streak: <span class="streak-val">${s}</span></span></div>`;
+        })()}
+      ${(function() {
+          if (inst.keeps === 0) return '';
+          const next = nextMilestone(inst.keeps);
+          const prev = [0,10,25,50,75,100,150,200,300,500].reduce((a, b) => b < next && b <= inst.keeps ? b : a, 0);
+          const pct = Math.round((inst.keeps - prev) / (next - prev) * 100);
+          return `<div class="milestone"><div class="milestone-bar"><div class="milestone-fill" style="width:${pct}%"></div></div><span>${next - inst.keeps} to ${next}</span></div>`;
         })()}
       <div class="last-keep" title="${inst.last_keep || ''}">
         ${inst.last_time ? `<span class="ts" data-time="${inst.last_time}">${relTime(inst.last_time)}</span>` : ''}
