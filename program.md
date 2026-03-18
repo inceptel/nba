@@ -57,7 +57,7 @@ LOOP FOREVER:
 
 1. **Screenshot** the live URL with agent-browser. Read `index.html`. Check `results.tsv` for recent attempts.
 
-   **CURRENT FOCUS: general** — Fix bugs first, then UX improvements, then visual polish. Make every iteration count.
+   **CURRENT FOCUS: advanced features + deep polish** — All known bugs are fixed. Focus on new data features (box scores, team stats, injury reports, head-to-head records) and polishing existing features. Make every iteration count.
 
 2. **Check deadline**: `echo $(($(cat /home/user/autoweb-nba/deadline 2>/dev/null || echo 9999999999) - $(date +%s)))s left`
    - If the deadline file is missing, continue normally (no hard stop).
@@ -84,15 +84,24 @@ LOOP FOREVER:
 
 Mark fixed issues with ~~strikethrough~~ rather than deleting them.
 
-- HIGH: Scheduled games show tip-off time in away score column — layout is wrong (check `homeAway` field for scheduled game rendering, not just live/final)
+- ~~HIGH: Scheduled games show tip-off time in away score column — layout is wrong (check `homeAway` field for scheduled game rendering, not just live/final)~~ (fixed iter 1)
 - ~~HIGH: No loading state shown while API fetches — user sees blank content briefly~~ (initial load had spinner; date nav now also shows spinner)
-- LOW: `usingYesterday` variable undefined in empty-state message (shows "today" instead of "recently" when auto-fallback to yesterday occurred)
-- MEDIUM: No standings tab — would be very useful alongside scores
+- ~~LOW: `usingYesterday` variable undefined in empty-state message (shows "today" instead of "recently" when auto-fallback to yesterday occurred)~~ (fixed iter 5)
+- ~~MEDIUM: No standings tab — would be very useful alongside scores~~ (fixed iter 7 — full standings with W/L/PCT/GB/L10/HOME/ROAD/CONF/DIFF/STRK)
 - ~~MEDIUM: Team logos are text initials — try fetching ESPN team logo URLs~~
-- MEDIUM: Player leader stats missing from many games — check API response structure
+- ~~MEDIUM: Player leader stats missing from many games — check API response structure~~ (fixed iter 23 — shows 2 leaders per team)
 - ~~LOW: No dark/light mode toggle~~
-- LOW: Mobile: game cards could be more compact
-- LOW: Add yesterday/tomorrow navigation arrows
+- ~~LOW: Mobile: game cards could be more compact~~ (fixed iter 30)
+- ~~LOW: Add yesterday/tomorrow navigation arrows~~ (fixed iter 3)
+
+### Potential next features (no known bugs remain)
+
+- MEDIUM: Box score / team stats for final/live games (FG%, rebounds, turnovers etc.)
+- MEDIUM: Injury report — show key player injuries on game cards (ESPN injury API exists)
+- LOW: Head-to-head season record shown on game cards
+- LOW: Team schedule popup — click team logo/name to see upcoming games
+- LOW: Playoff bracket tab — visual bracket for postseason (when applicable)
+- LOW: Player search — search any player for season stats
 
 ## Design principles
 
@@ -123,3 +132,6 @@ This repo demonstrates the full autoweb feature set:
 - ESPN API returns `competitors[0]` as either home or away — always check `homeAway` field
 - The `homeAway` field bug affects scheduled games differently than live/final — test all three states
 - Mark fixed issues with ~~strikethrough~~ in Known Issues — do not delete them
+- **ESPN API reliability**: `site.api.espn.com` endpoints can go 404 without warning — always verify a new API endpoint returns 200 with valid data before building on it
+- **Leaders API**: `site.api.espn.com/apis/site/v2/sports/basketball/nba/leaders` is 404 (broken). Use `sports.core.api.espn.com/v2/sports/basketball/leagues/nba/seasons/{year}/types/2/leaders` instead. Note: this API uses `$ref` links for athletes; batch-fetch athlete names with `Promise.all`.
+- **Regression risk**: the dashboard now has 15+ features — when verifying a new iteration, check that the Standings tab, Leaders tab, and date navigation still work, not just the feature you changed
