@@ -1,18 +1,23 @@
 {
-  "updated": "2026-03-18T00:28:45.068059+00:00",
+  "updated": "2026-03-18T00:31:25.700833+00:00",
   "instances": [
     {
       "name": "nba",
       "url": "https://allan.feather-cloud.dev/public/nba/",
       "running": true,
-      "keeps": 55,
+      "keeps": 56,
       "reverts": 0,
       "crashes": 0,
-      "last_keep": "Use shortDisplayName for team names on game cards \u2014 shows 'Celtics' instead of 'Boston Celtics' for ",
-      "last_time": "2026-03-18T00:26:22Z"
+      "last_keep": "Update section count badge when filtering \u2014 shows 'X/N' (matched/total) so users see filter impact a",
+      "last_time": "2026-03-18T00:29:30Z"
     }
   ],
   "recent": [
+    {
+      "time": "2026-03-18T00:29:30Z",
+      "instance": "nba",
+      "desc": "Update section count badge when filtering \u2014 shows 'X/N' (matched/total) so users see filter impact a"
+    },
     {
       "time": "2026-03-18T00:26:22Z",
       "instance": "nba",
@@ -57,11 +62,6 @@
       "time": "2026-03-17T23:59:02Z",
       "instance": "nba",
       "desc": "Add player headshots to leader badges \u2014 tiny circular photos appear next to player names using ESPN "
-    },
-    {
-      "time": "2026-03-17T23:52:26Z",
-      "instance": "nba",
-      "desc": "Add standings refresh button and last-updated timestamp \u2014 standings tab now shows 'Updated X:XX PM \u00b7"
     }
   ]
 }

@@ -263,6 +263,16 @@ function getRecord(competitor, preferType) {
   return found ? found.summary : (records[0]?.summary || '');
 }
 
+function colorRecordStr(rec) {
+  if (!rec) return rec;
+  const m = rec.match(/^(\d+)-(\d+)$/);
+  if (!m) return rec;
+  const w = parseInt(m[1]), l = parseInt(m[2]);
+  if (w > l) return `<span style="color:var(--green)">${rec}</span>`;
+  if (l > w) return `<span style="color:var(--red)">${rec}</span>`;
+  return rec;
+}
+
 function renderLeaders(competitors) {
   const leaders = [];
   for (const team of competitors) {
@@ -436,7 +446,7 @@ function renderGame(event) {
       <img class="team-logo" src="${awayLogoUrl}" alt="${awayAbbr}" onerror="this.outerHTML='<div class=\\'team-logo-placeholder\\' style=\\'background:${awayColor}20;color:${awayColor}\\'>${awayAbbr}</div>'">
       <div class="team-info">
         <div class="team-name">${awayName}</div>
-        <div class="team-record">${getRecord(away, 'road')}${away.records?.find(r=>r.name==='road'||r.type==='road') ? '<span style="color:var(--muted);font-size:9px;margin-left:3px">ROAD</span>' : ''}</div>
+        <div class="team-record">${colorRecordStr(getRecord(away, 'road'))}${away.records?.find(r=>r.name==='road'||r.type==='road') ? '<span style="color:var(--muted);font-size:9px;margin-left:3px">ROAD</span>' : ''}</div>
       </div>
       ${isScheduled ? '' : `<div class="team-score">${away.score ?? '-'}${(isLive && homeLeading && liveScoreDiff > 0) ? `<span style="font-size:10px;color:var(--muted);font-weight:400;margin-left:3px">-${liveScoreDiff}</span>` : ''}</div>`}
     </div>
@@ -445,7 +455,7 @@ function renderGame(event) {
       <img class="team-logo" src="${homeLogoUrl}" alt="${homeAbbr}" onerror="this.outerHTML='<div class=\\'team-logo-placeholder\\' style=\\'background:${homeColor}20;color:${homeColor}\\'>${homeAbbr}</div>'">
       <div class="team-info">
         <div class="team-name">${homeName}${isScheduled ? '<span class="home-badge">HOME</span>' : ''}</div>
-        <div class="team-record">${getRecord(home, 'home')}${home.records?.find(r=>r.name==='home'||r.type==='home') ? '<span style="color:var(--muted);font-size:9px;margin-left:3px">HOME</span>' : ''}</div>
+        <div class="team-record">${colorRecordStr(getRecord(home, 'home'))}${home.records?.find(r=>r.name==='home'||r.type==='home') ? '<span style="color:var(--muted);font-size:9px;margin-left:3px">HOME</span>' : ''}</div>
       </div>
       ${isScheduled ? '' : `<div class="team-score">${home.score ?? '-'}${(isLive && awayLeading && liveScoreDiff > 0) ? `<span style="font-size:10px;color:var(--muted);font-weight:400;margin-left:3px">-${liveScoreDiff}</span>` : ''}</div>`}
     </div>
