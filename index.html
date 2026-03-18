@@ -177,6 +177,14 @@
 </div>
 
 <div id="scores-panel">
+  <div id="scores-filter" style="padding:8px 12px 2px;display:flex;align-items:center;gap:6px">
+    <span style="color:var(--muted);font-size:12px">&#128269;</span>
+    <input type="text" id="team-filter" placeholder="Filter by team…" autocomplete="off"
+      style="background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:inherit;font-size:12px;padding:4px 8px;width:150px;outline:none;transition:border-color 0.2s"
+      onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"
+      oninput="filterGames(this.value)">
+    <button id="filter-clear-btn" onclick="clearFilter()" title="Clear filter" style="display:none;background:none;border:none;color:var(--muted);font-size:14px;cursor:pointer;padding:0 2px;line-height:1;transition:color 0.2s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">✕</button>
+  </div>
   <div id="games-container">
     <div class="loading">
       <div class="spinner"></div><br>Loading scores...
@@ -544,6 +552,9 @@ async function load(showSpinner = false) {
     container.innerHTML = html;
     label.textContent = `updated ${new Date().toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'})}`;
     updatePageTitle(events);
+    // Re-apply team filter if active
+    const filterInput = document.getElementById('team-filter');
+    if (filterInput?.value) filterGames(filterInput.value);
 
   } catch (e) {
     container.innerHTML = `<div class="error">Failed to load scores: ${e.message}<br><br><small>Will retry in 30s</small></div>`;
@@ -595,6 +606,29 @@ document.getElementById('next-btn').addEventListener('click', () => {
 });
 
 load().then(startCountdown);
+
+function filterGames(query) {
+  const clearBtn = document.getElementById('filter-clear-btn');
+  if (clearBtn) clearBtn.style.display = query ? '' : 'none';
+  const q = query.trim().toLowerCase();
+  document.querySelectorAll('#games-container .game').forEach(el => {
+    el.style.display = !q || el.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+  // Show/hide section labels based on visible games
+  document.querySelectorAll('#games-container .section-label').forEach(label => {
+    const nextSib = label.nextElementSibling;
+    if (nextSib?.classList.contains('games')) {
+      const hasVisible = [...nextSib.querySelectorAll('.game')].some(g => g.style.display !== 'none');
+      label.style.display = hasVisible ? '' : 'none';
+      nextSib.style.display = hasVisible ? '' : 'none';
+    }
+  });
+}
+
+function clearFilter() {
+  const input = document.getElementById('team-filter');
+  if (input) { input.value = ''; filterGames(''); }
+}
 
 function toggleTheme() {
   const isLight = document.body.classList.toggle('light');

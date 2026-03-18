@@ -65,6 +65,7 @@ h1 { font-size: 22px; font-weight: 700; color: #fff; letter-spacing: -0.5px; }
 }
 .status-pill.running { background: #14532d; color: #4ade80; }
 .status-pill.stopped { background: #3b1515; color: #f87171; }
+.status-pill.flawless { background: #1e1b4b; color: #818cf8; }
 
 .stats { display: flex; gap: 14px; margin-bottom: 12px; }
 .stat { flex: 1; }
@@ -176,12 +177,13 @@ function renderCard(inst, recent) {
     <div class="card" data-instance="${inst.name}">
       <div class="card-header">
         <span class="card-name">${inst.name}</span>
+        ${inst.reverts === 0 && inst.crashes === 0 && inst.keeps > 0 ? '<span class="status-pill flawless">flawless</span>' : ''}
         <span class="status-pill ${inst.running ? 'running' : 'stopped'}">${inst.running ? 'running' : 'stopped'}</span>
       </div>
       <div class="stats">
         <div class="stat"><div class="stat-val keeps">${inst.keeps}</div><div class="stat-label">keeps</div></div>
-        <div class="stat"><div class="stat-val reverts">${inst.reverts}</div><div class="stat-label">reverts</div></div>
-        <div class="stat"><div class="stat-val crashes">${inst.crashes}</div><div class="stat-label">crashes</div></div>
+        <div class="stat"><div class="stat-val ${inst.reverts > 0 ? 'reverts' : ''}" style="${inst.reverts === 0 ? 'color:var(--muted)' : ''}">${inst.reverts}</div><div class="stat-label">reverts</div></div>
+        <div class="stat"><div class="stat-val ${inst.crashes > 0 ? 'crashes' : ''}" style="${inst.crashes === 0 ? 'color:var(--muted)' : ''}">${inst.crashes}</div><div class="stat-label">crashes</div></div>
       </div>
       ${(function() {
           const total = inst.keeps + inst.reverts;
